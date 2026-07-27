@@ -53,31 +53,8 @@ Do not wait for answers — proceed through all decisions autonomously.
 
 ## Output
 
-Write `.konveyor/questionnaire.json` with this structure:
-
-```json
-{
-  "detection": {
-    "language": "<detected language>",
-    "version": "<detected version>",
-    "frameworks": ["<framework-1>", "<framework-2>"],
-    "build_tool": "<build tool>",
-    "app_server": "<app server or null>",
-    "source_file_count": 0
-  },
-  "decisions": [
-    {
-      "id": 1,
-      "question": "...",
-      "options": ["A) ...", "B) ...", "C) ..."],
-      "recommendation": "A",
-      "chosen": "B",
-      "reasoning": "..."
-    }
-  ],
-  "mode": "interactive"
-}
-```
+Write `.konveyor/questionnaire.json`. See [templates/questionnaire.md](templates/questionnaire.md)
+for the full schema and field descriptions.
 
 Create the `.konveyor/` directory if it does not exist.
 
