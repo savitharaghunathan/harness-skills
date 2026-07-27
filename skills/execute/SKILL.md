@@ -16,7 +16,7 @@ phases. Runs the build gate after each phase and fixes errors before moving on.
 
 ## Startup
 
-1. Read `implementation.md` — read it ONCE
+1. Read `implementation.md`
 2. Scan `/opt/skills/` for skills with `tags: [domain]` in their frontmatter
 3. Read the domain skill's phases, modules, and references
 4. Read `.konveyor/questionnaire.json` for context on decisions made
@@ -30,7 +30,7 @@ Follow the domain skill's phase order. For each phase:
 ### Step 1 — Apply transformations
 
 - Read the domain skill's module for this phase
-- Read the domain skill's reference tables (dependency-map, api-map, config-map, pattern-map)
+- Read the domain skill's reference tables (dependency-map, api-map, config-map, pattern-map), if they exist
 - Work through the steps in `implementation.md` that belong to this phase
 - For each file:
   1. Read the target file
@@ -77,43 +77,8 @@ proceed to the next phase.
 
 ## Output
 
-Write `.konveyor/execute.json`:
-
-```json
-{
-  "phases": [
-    {
-      "name": "<phase-1-name>",
-      "status": "success",
-      "fix_iterations": 0
-    },
-    {
-      "name": "<phase-2-name>",
-      "status": "success",
-      "fix_iterations": 2,
-      "errors_fixed": 5
-    },
-    {
-      "name": "<phase-3-name>",
-      "status": "partial",
-      "fix_iterations": 3,
-      "remaining_errors": ["<file>:<line> — <error description>"]
-    }
-  ],
-  "build": {
-    "status": "pass|fail",
-    "command": "<build command from domain skill>",
-    "errors": []
-  },
-  "tests": {
-    "status": "pass|fail|skipped",
-    "passed": 10,
-    "failed": 2,
-    "total": 12,
-    "failures": ["<TestName>.<method> — <error> at line <N>"]
-  }
-}
-```
+Write `.konveyor/execute.json`. See [templates/execute.md](templates/execute.md)
+for the full schema and field descriptions.
 
 Create the `.konveyor/` directory if it does not exist.
 

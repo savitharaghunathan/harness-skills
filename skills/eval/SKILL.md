@@ -57,40 +57,8 @@ From the git log and execute.json, identify:
 
 ## Output
 
-Write `.konveyor/eval.json`:
-
-```json
-{
-  "scores": {
-    "build": "pass",
-    "test_pass_rate": 0.83,
-    "completeness": 1.0,
-    "total_fix_iterations": 5,
-    "remaining_errors": 0
-  },
-  "decision_scores": [
-    {
-      "decision_id": 1,
-      "question": "<question from questionnaire>",
-      "chosen": "<chosen option>",
-      "outcome": "effective",
-      "notes": "<why this outcome>"
-    },
-    {
-      "decision_id": 2,
-      "question": "<question from questionnaire>",
-      "chosen": "<chosen option>",
-      "outcome": "struggled",
-      "notes": "<why this outcome>"
-    }
-  ],
-  "patterns": {
-    "worked": ["<phase/pattern that completed cleanly>"],
-    "struggled": ["<phase/pattern that needed multiple fix iterations>"],
-    "failed": []
-  }
-}
-```
+Write `.konveyor/eval.json`. See [templates/eval.md](templates/eval.md)
+for the full schema and field descriptions.
 
 
 ---
