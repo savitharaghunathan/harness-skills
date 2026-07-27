@@ -62,7 +62,4 @@ Create the `.konveyor/` directory if it does not exist.
 
 ## Rules
 
-- Do NOT run graphify or read analysis.json — that is the plan stage's job
-- Do NOT modify any source files
-- Do NOT start planning — only detect and gather decisions
 - Keep detection lightweight — read manifests and scan imports, nothing more
