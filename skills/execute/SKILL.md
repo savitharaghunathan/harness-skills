@@ -65,8 +65,6 @@ After fixing, re-run the build (Step 2). Repeat up to
 If the build still fails after max iterations: record remaining errors and
 proceed to the next phase.
 
-### Step 4 — Commit
-
 ---
 
 ## After All Phases
@@ -85,26 +83,26 @@ Write `.konveyor/execute.json`:
 {
   "phases": [
     {
-      "name": "build-config",
+      "name": "<phase-1-name>",
       "status": "success",
       "fix_iterations": 0
     },
     {
-      "name": "ejb-to-cdi",
+      "name": "<phase-2-name>",
       "status": "success",
       "fix_iterations": 2,
       "errors_fixed": 5
     },
     {
-      "name": "messaging",
+      "name": "<phase-3-name>",
       "status": "partial",
       "fix_iterations": 3,
-      "remaining_errors": ["OrderServiceMDB.java:12 — cannot resolve symbol"]
+      "remaining_errors": ["<file>:<line> — <error description>"]
     }
   ],
   "build": {
     "status": "pass|fail",
-    "command": "mvn compile",
+    "command": "<build command from domain skill>",
     "errors": []
   },
   "tests": {
@@ -112,7 +110,7 @@ Write `.konveyor/execute.json`:
     "passed": 10,
     "failed": 2,
     "total": 12,
-    "failures": ["OrderServiceTest.testCreate — NPE at line 42"]
+    "failures": ["<TestName>.<method> — <error> at line <N>"]
   }
 }
 ```

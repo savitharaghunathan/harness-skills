@@ -18,19 +18,8 @@ that need to be made before planning can begin.
 
 Lightweight automated scan. No graphify, no deep analysis.
 
-1. Read the build manifest:
-   - Java: `pom.xml` or `build.gradle`
-   - JavaScript/TypeScript: `package.json`
-   - Go: `go.mod`
-   - .NET: `*.csproj` or `*.sln`
-   - Python: `pyproject.toml`, `setup.py`, or `requirements.txt`
-   - Rust: `Cargo.toml`
-
-2. Scan source files for framework markers:
-   - Imports and annotations (e.g. `javax.ejb`, `@SpringBootApplication`)
-   - Config files (e.g. `persistence.xml`, `web.xml`, `application.yml`)
-   - App server descriptors (e.g. `weblogic.xml`, `jboss-web.xml`)
-
+1. Read the build manifest (pom.xml, package.json, go.mod, Cargo.toml, *.csproj, etc.)
+2. Scan source files for framework markers (imports, annotations, config files, app server descriptors)
 3. Summarize what you found:
    - Language and version
    - Frameworks and libraries
@@ -69,12 +58,12 @@ Write `.konveyor/questionnaire.json` with this structure:
 ```json
 {
   "detection": {
-    "language": "java",
-    "version": "1.8",
-    "frameworks": ["java-ee-7", "ejb-3.1", "jms-1.1"],
-    "build_tool": "maven",
-    "app_server": "weblogic",
-    "source_file_count": 42
+    "language": "<detected language>",
+    "version": "<detected version>",
+    "frameworks": ["<framework-1>", "<framework-2>"],
+    "build_tool": "<build tool>",
+    "app_server": "<app server or null>",
+    "source_file_count": 0
   },
   "decisions": [
     {

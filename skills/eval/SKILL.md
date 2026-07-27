@@ -71,22 +71,22 @@ Write `.konveyor/eval.json`:
   "decision_scores": [
     {
       "decision_id": 1,
-      "question": "Migration goal",
-      "chosen": "Minimal viable migration",
+      "question": "<question from questionnaire>",
+      "chosen": "<chosen option>",
       "outcome": "effective",
-      "notes": "All phases completed, build passes"
+      "notes": "<why this outcome>"
     },
     {
       "decision_id": 2,
-      "question": "How to handle JMS messaging",
-      "chosen": "SmallRye Reactive Messaging",
+      "question": "<question from questionnaire>",
+      "chosen": "<chosen option>",
       "outcome": "struggled",
-      "notes": "Messaging phase needed 3 fix iterations"
+      "notes": "<why this outcome>"
     }
   ],
   "patterns": {
-    "worked": ["Build config migration — clean, no fixes needed"],
-    "struggled": ["MDB conversion required multiple iterations"],
+    "worked": ["<phase/pattern that completed cleanly>"],
+    "struggled": ["<phase/pattern that needed multiple fix iterations>"],
     "failed": []
   }
 }

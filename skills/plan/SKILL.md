@@ -189,8 +189,8 @@ Write `implementation.md` — step-by-step migration instructions.
 
 **Mechanical** (simple find-replace):
 ```markdown
-### Step 5: Migrate imports in Order.java
-- File: src/main/java/com/example/model/Order.java
+### Step 5: Migrate imports in <file>
+- File: <exact path from graph.json>
 - Action: MODIFY
 - What to do: Replace all old namespace imports with new namespace imports
 - Why: Target framework uses different namespace
