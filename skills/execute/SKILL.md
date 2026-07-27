@@ -42,7 +42,7 @@ Follow the domain skill's phase order. For each phase:
 
 Run the build command from the domain skill's metadata (`metadata.build_tool`).
 
-- If the build **succeeds** (exit code 0): git commit and proceed to the next phase
+- If the build **succeeds** (exit code 0): proceed to the next phase
 - If the build **fails**: go to Step 3
 
 ### Step 3 — Fix errors
@@ -66,8 +66,6 @@ If the build still fails after max iterations: record remaining errors and
 proceed to the next phase.
 
 ### Step 4 — Commit
-
-Git commit all changes for this phase with a message describing what was done.
 
 ---
 
@@ -119,7 +117,7 @@ Write `.konveyor/execute.json`:
 }
 ```
 
-Create the `.konveyor/` directory if it does not exist. Git commit.
+Create the `.konveyor/` directory if it does not exist.
 
 ---
 

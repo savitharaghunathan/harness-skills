@@ -13,26 +13,6 @@ Analyzes the project deeply, produces a spec for approval, then writes the
 implementation plan. `KONVEYOR_INSTRUCTIONS` is the primary goal; questionnaire
 decisions supplement it. Does NOT modify any source files — planning only.
 
-## How This Works
-
-1. **Reference-Driven**: Domain skills (`tags: [domain]`) loaded at `/opt/skills/`
-   contain migration knowledge — phase order, transformation patterns, mapping
-   tables. Read them to understand what to plan for.
-
-2. **Graph-Powered**: The code graph (`graph.json`) provides:
-   - Architectural layers (communities)
-   - File relationships (edges)
-   - High-risk files (god nodes)
-   - Which files match which patterns (imports, annotations)
-
-3. **Selective Reading**: You DON'T read every file. You:
-   - Read the build manifest (1 file)
-   - Read domain skill modules and references
-   - Read 5-8 complex source files that need structural changes
-   - Use the graph for everything else (imports, annotations, counts)
-
----
-
 ## Inputs
 
 - `KONVEYOR_INSTRUCTIONS` — migration goal (primary)
@@ -112,23 +92,11 @@ Community 164 (12 files: controllers)    → Phase 4: API
 
 This gives you the migration sequence WITHOUT reading every file.
 
-### 1g. Read Selectively (max 5-8 files)
+### 1g. Selectively Read Complex Source Files (max 5-8)
 
-**READ these**:
-- Build manifest (pom.xml, package.json, .csproj) — ALWAYS
-- Files matching complex patterns from the domain skill
-- God nodes (high-degree) that use complex patterns
-- Files the domain skill marks as needing structural changes
-
-**DON'T READ these** (the graph is enough):
-- Files that only need import/annotation changes
-- Simple entity/model classes
-- Simple REST controllers with basic CRUD
-
-**Rules:**
-- Read ONE file at a time
-- Read ONLY files where the graph + domain skill isn't enough
-- If uncertain about a file, mark the step COMPLEX and move on
+Read files where the graph alone isn't enough — structural changes, god nodes,
+complex patterns from the domain skill. Don't read files that only need
+import or annotation changes.
 
 ---
 
@@ -252,7 +220,7 @@ Write `implementation.md` — step-by-step migration instructions.
 
 ## Output
 
-Git commit `spec.md` and `implementation.md`.
+Write `spec.md` and `implementation.md`.
 
 ---
 
@@ -261,5 +229,4 @@ Git commit `spec.md` and `implementation.md`.
 - Do NOT modify source files — planning only
 - Do NOT execute any migration steps
 - Do NOT skip graphify — the graph is essential for later stages
-- Read selectively — the graph gives you most of what you need
 - Follow the domain skill's phase order when structuring steps

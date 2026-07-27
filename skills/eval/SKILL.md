@@ -92,7 +92,6 @@ Write `.konveyor/eval.json`:
 }
 ```
 
-Git commit.
 
 ---
 

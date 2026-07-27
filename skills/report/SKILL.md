@@ -71,7 +71,6 @@ Write `.konveyor/report.md` following the structure above. Use clear markdown
 formatting — headers, tables, bullet lists. This report is for the developer
 who will review and continue the migration.
 
-Git commit.
 
 ---
 
