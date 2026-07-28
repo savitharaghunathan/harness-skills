@@ -77,7 +77,7 @@ the migration sequence.
 
 ## Plan Quality Checklist
 
-Before finalizing `implementation.md`, verify:
+Before finalizing `.konveyor/implementation.md`, verify:
 
 - [ ] Every file path is real (from graph.json), not a placeholder
 - [ ] Steps follow the domain skill's phase order

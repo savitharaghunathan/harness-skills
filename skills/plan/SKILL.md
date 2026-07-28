@@ -102,7 +102,7 @@ import or annotation changes.
 
 ## Phase 2 — Spec
 
-Write `spec.md` — a summary of what will be migrated, the approach, and key
+Write `.konveyor/spec.md` — a summary of what will be migrated, the approach, and key
 decisions applied. Structure:
 
 ```markdown
@@ -142,7 +142,7 @@ Proceed directly to Phase 3.
 
 ## Phase 3 — Implementation Plan
 
-Write `implementation.md` — step-by-step migration instructions.
+Write `.konveyor/implementation.md` — step-by-step migration instructions.
 
 ```markdown
 # Implementation Plan
@@ -160,6 +160,7 @@ Write `implementation.md` — step-by-step migration instructions.
 ## Steps
 
 ### Step 1: <title>
+- Phase: <domain-skill-phase-name>
 - File: <exact path from repo root>
 - Action: CREATE | MODIFY | DELETE
 - What to do: <specific instructions>
@@ -220,7 +221,9 @@ Write `implementation.md` — step-by-step migration instructions.
 
 ## Output
 
-Write `spec.md` and `implementation.md`.
+Write `.konveyor/spec.md` and `.konveyor/implementation.md`.
+
+Create the `.konveyor/` directory if it does not exist.
 
 ---
 

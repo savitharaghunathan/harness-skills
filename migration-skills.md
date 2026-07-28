@@ -93,13 +93,13 @@ description: >
 
 ### Phase 2 — Spec
 
-Write `spec.md` — what will be migrated, the approach, key decisions applied.
+Write `.konveyor/spec.md` — what will be migrated, the approach, key decisions applied.
 
 Interactive: present for approval. Non-interactive: proceed.
 
 ### Phase 3 — Implementation Plan
 
-Write `implementation.md` — step-by-step migration instructions. One step per file, dependency order, complex steps flagged.
+Write `.konveyor/implementation.md` — step-by-step migration instructions. One step per file, dependency order, complex steps flagged.
 
 
 
@@ -140,7 +140,7 @@ description: >
 ### Changes from current
 
 - Combines execute + verify into one stage
-- Reads `implementation.md` instead of `PLAN.md`
+- Reads `.konveyor/implementation.md` instead of `PLAN.md`
 - Follows domain skill phases with build gates, not just a flat step list
 - Discovers domain skills via `tags: [domain]` frontmatter
 - `tags: [stage]` in frontmatter
@@ -165,7 +165,7 @@ description: >
 
 - `.konveyor/questionnaire.json` — decisions made
 - `.konveyor/execute.json` — phase outcomes, fix iterations, build/test results
-- `implementation.md` — what was planned
+- `.konveyor/implementation.md` — what was planned
 - Git log — what actually happened
 
 ### Process
@@ -199,7 +199,7 @@ description: >
 - `.konveyor/questionnaire.json` — what was detected, what was decided
 - `.konveyor/execute.json` — phase outcomes, fix iterations
 - `.konveyor/eval.json` — quality scores, learned patterns
-- `spec.md`, `implementation.md` — what was planned
+- `.konveyor/spec.md`, `.konveyor/implementation.md` — what was planned
 
 ### Process
 
@@ -247,7 +247,7 @@ Stage skills find domain skills by reading frontmatter (`tags: [domain]`). No ha
 | Stage | Reads | Writes |
 |-------|-------|--------|
 | Questionnaire | source repo | `.konveyor/questionnaire.json` |
-| Plan | questionnaire.json, analysis.json, domain skills | `spec.md`, `implementation.md`, `graph.json` |
-| Execute | implementation.md, domain skills | migrated source files + fix patches + `.konveyor/execute.json` |
-| Eval | questionnaire.json, execute.json, implementation.md, git log | `.konveyor/eval.json` |
-| Report | questionnaire.json, execute.json, eval.json, spec.md, implementation.md | `.konveyor/report.md` |
+| Plan | questionnaire.json, analysis.json, domain skills | `.konveyor/spec.md`, `.konveyor/implementation.md`, `graph.json` |
+| Execute | .konveyor/implementation.md, domain skills | migrated source files + fix patches + `.konveyor/execute.json` |
+| Eval | questionnaire.json, execute.json, .konveyor/implementation.md, git log | `.konveyor/eval.json` |
+| Report | questionnaire.json, execute.json, eval.json, .konveyor/spec.md, .konveyor/implementation.md | `.konveyor/report.md` |

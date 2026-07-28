@@ -18,8 +18,8 @@ human-readable migration report.
 - `.konveyor/questionnaire.json` — what was detected, what was decided
 - `.konveyor/execute.json` — phase outcomes, fix iterations, build/test results
 - `.konveyor/eval.json` — quality scores, learned patterns
-- `spec.md` — migration spec
-- `implementation.md` — what was planned
+- `.konveyor/spec.md` — migration spec
+- `.konveyor/implementation.md` — what was planned
 
 ---
 

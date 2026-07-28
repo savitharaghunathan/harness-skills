@@ -16,7 +16,7 @@ phases. Runs the build gate after each phase and fixes errors before moving on.
 
 ## Startup
 
-1. Read `implementation.md`
+1. Read `.konveyor/implementation.md`
 2. Scan `/opt/skills/` for skills with `tags: [domain]` in their frontmatter
 3. Read the domain skill's phases, modules, and references
 4. Read `.konveyor/questionnaire.json` for context on decisions made
@@ -31,7 +31,7 @@ Follow the domain skill's phase order. For each phase:
 
 - Read the domain skill's module for this phase
 - Read the domain skill's reference tables (dependency-map, api-map, config-map, pattern-map), if they exist
-- Work through the steps in `implementation.md` that belong to this phase
+- Work through the steps in `.konveyor/implementation.md` that belong to this phase
 - For each file:
   1. Read the target file
   2. Apply transformations per the module instructions and reference tables
@@ -91,7 +91,7 @@ Create the `.konveyor/` directory if it does not exist.
 - Run the build gate after EVERY phase — do not skip
 - Fix only compiler errors, not warnings or style issues
 - If you cannot fix an error after max iterations, record it and move on
-- Do NOT modify `implementation.md` or `spec.md`
-- Do NOT re-read `implementation.md` after every step — read it once
-- If no domain skill is loaded, treat `implementation.md` as a flat step list
+- Do NOT modify `.konveyor/implementation.md` or `.konveyor/spec.md`
+- Do NOT re-read `.konveyor/implementation.md` after every step — read it once
+- If no domain skill is loaded, treat `.konveyor/implementation.md` as a flat step list
   and run the build after all steps are complete

@@ -33,10 +33,10 @@ Each stage reads artifacts from `.konveyor/` written by prior stages. Git is the
 | Stage | Reads | Writes |
 |---|---|---|
 | Questionnaire | source repo | `.konveyor/questionnaire.json` |
-| Plan | questionnaire.json, analysis.json, domain skills | `spec.md`, `implementation.md`, `graph.json` |
-| Execute | implementation.md, domain skills | source files + `.konveyor/execute.json` |
-| Eval | questionnaire.json, execute.json, implementation.md, git log | `.konveyor/eval.json` |
-| Report | questionnaire.json, execute.json, eval.json, spec.md, implementation.md | `.konveyor/report.md` |
+| Plan | questionnaire.json, analysis.json, domain skills | `.konveyor/spec.md`, `.konveyor/implementation.md`, `graph.json` |
+| Execute | .konveyor/implementation.md, domain skills | source files + `.konveyor/execute.json` |
+| Eval | questionnaire.json, execute.json, .konveyor/implementation.md, git log | `.konveyor/eval.json` |
+| Report | questionnaire.json, execute.json, eval.json, .konveyor/spec.md, .konveyor/implementation.md | `.konveyor/report.md` |
 
 ## Design
 

@@ -18,7 +18,7 @@ results.
 
 - `.konveyor/questionnaire.json` — decisions made before planning
 - `.konveyor/execute.json` — phase outcomes, fix iterations, build/test results
-- `implementation.md` — what was planned
+- `.konveyor/implementation.md` — what was planned
 - Git log — what actually changed
 
 ---
