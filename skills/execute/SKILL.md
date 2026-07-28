@@ -20,23 +20,27 @@ phases. Runs the build gate after each phase and fixes errors before moving on.
 2. Scan `/opt/skills/` for skills with `tags: [domain]` in their frontmatter
 3. Read the domain skill's phases, modules, and references
 4. Read `.konveyor/questionnaire.json` for context on decisions made
+5. Validate that every step in `.konveyor/implementation.md` has a `Phase:` field
+   matching a domain skill phase. If any step has no match (orphan), halt with
+   an error listing the orphan steps.
 
 ---
 
 ## Execution Loop
 
-Follow the domain skill's phase order. For each phase:
+Follow the domain skill's phase order. For each phase, select only the steps
+from `.konveyor/implementation.md` whose `Phase:` field matches this phase.
 
 ### Step 1 — Apply transformations
 
 - Read the domain skill's module for this phase
 - Read the domain skill's reference tables (dependency-map, api-map, config-map, pattern-map), if they exist
-- Work through the steps in `.konveyor/implementation.md` that belong to this phase
-- For each file:
+- For each step belonging to this phase:
   1. Read the target file
   2. Apply transformations per the module instructions and reference tables
   3. Write the modified file
-  4. Move to the next file immediately
+  4. Git commit: `git commit -m "Step <N>: <step title>"`
+  5. Record step status as `applied` in the execution log
 
 ### Step 2 — Build gate
 
@@ -63,13 +67,16 @@ After fixing, re-run the build (Step 2). Repeat up to
 `KONVEYOR_PARAM_MAX_FIX_ITERATIONS` times (read from environment, default 3).
 
 If the build still fails after max iterations: record remaining errors and
-proceed to the next phase.
+**halt execution**. Do not proceed to the next phase.
+
+To override this behavior and continue despite build failures, set
+`KONVEYOR_PARAM_CONTINUE_ON_BUILD_FAIL=true` in the environment.
 
 ---
 
 ## After All Phases
 
-1. Run the test command (if available from domain skill metadata or `implementation.md`)
+1. Run the test command (if available from domain skill metadata or `.konveyor/implementation.md`)
 2. Report test results (passed/failed/total counts)
 3. Do NOT attempt to fix failing tests — document them
 
@@ -88,9 +95,12 @@ Create the `.konveyor/` directory if it does not exist.
 
 - Work through ALL steps — completeness matters more than perfection
 - Follow the domain skill's phase order exactly
+- Select steps by `Phase:` field — only run steps matching the current phase
+- Halt on orphan steps (no matching domain phase) during startup validation
 - Run the build gate after EVERY phase — do not skip
 - Fix only compiler errors, not warnings or style issues
-- If you cannot fix an error after max iterations, record it and move on
+- Halt after max fix iterations unless `KONVEYOR_PARAM_CONTINUE_ON_BUILD_FAIL=true`
+- Git commit after every step
 - Do NOT modify `.konveyor/implementation.md` or `.konveyor/spec.md`
 - Do NOT re-read `.konveyor/implementation.md` after every step — read it once
 - If no domain skill is loaded, treat `.konveyor/implementation.md` as a flat step list

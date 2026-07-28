@@ -46,13 +46,15 @@ per-decision effectiveness breakdown, and pattern observations.
 |---|---|
 | `build` | Final build status from `execute.json` (`pass` or `fail`) |
 | `test_pass_rate` | Passed tests / total tests, from `execute.json` |
-| `completeness` | Fraction of `implementation.md` steps actually applied |
+| `completeness` | Fraction of steps with `status: "applied"` in `execute.json` `steps` array |
 | `total_fix_iterations` | Sum of `fix_iterations` across all phases |
 | `remaining_errors` | Count of unresolved compiler errors across all phases |
 
 ### decision_scores
 
-One entry per decision in `questionnaire.json`, judged against how execution went.
+One entry per decision in `questionnaire.json`. Outcomes are **correlational** —
+they describe what execution results are associated with each decision, not
+what each decision caused.
 
 | Field | Description |
 |---|---|
@@ -60,7 +62,7 @@ One entry per decision in `questionnaire.json`, judged against how execution wen
 | `question` | The decision as stated in `questionnaire.json` |
 | `chosen` | The option that was selected |
 | `outcome` | `effective`, `struggled`, or `failed` |
-| `notes` | Why this outcome was assigned |
+| `notes` | What phase outcomes are associated with this decision and why |
 
 ### patterns
 

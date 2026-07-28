@@ -95,11 +95,11 @@ description: >
 
 Write `.konveyor/spec.md` — what will be migrated, the approach, key decisions applied.
 
-Interactive: present for approval. Non-interactive: proceed.
+Interactive (`KONVEYOR_PARAM_INTERACTIVE=true`): present for approval. If rejected, revise and re-present until approved. Non-interactive (default): proceed.
 
 ### Phase 3 — Implementation Plan
 
-Write `.konveyor/implementation.md` — step-by-step migration instructions. One step per file, dependency order, complex steps flagged.
+Write `.konveyor/implementation.md` — step-by-step migration instructions. One step per file, dependency order, complex steps flagged. Every step must include a `Phase:` field matching a domain skill phase.
 
 
 
@@ -122,16 +122,18 @@ description: >
 
 ### Process
 
-1. Read `implementation.md`
+1. Read `.konveyor/implementation.md`
 2. Find loaded domain skills (`tags: [domain]`), read their phases, modules, and references
-3. Follow the domain skill's phase order (e.g. build-config → app-config → ejb-to-cdi → ...)
-4. For each phase:
+3. Validate every step has a `Phase:` matching a domain skill phase — halt on orphans
+4. Follow the domain skill's phase order (e.g. build-config → app-config → ejb-to-cdi → ...)
+5. For each phase, select steps by `Phase:` field:
    - Apply transformations per the module instructions and reference tables
+   - Git commit after each step
    - Run the build gate (build command from domain skill metadata)
    - If build fails: fix errors iteratively (max `KONVEYOR_PARAM_MAX_FIX_ITERATIONS`, default 3)
-   - Git commit
-5. After all phases: run tests, report results (do not fix test failures)
-6. Write `.konveyor/execute.json` — per-phase status, fix iterations, remaining errors, build/test results
+   - If build still fails after max iterations: **halt** (override with `KONVEYOR_PARAM_CONTINUE_ON_BUILD_FAIL=true`)
+6. After all phases: run tests, report results (do not fix test failures)
+7. Write `.konveyor/execute.json` — per-step status, per-phase results, build/test results
 
 ### Output
 
@@ -170,8 +172,8 @@ description: >
 
 ### Process
 
-1. Score the migration (build pass/fail, test pass rate, completeness, fix effort)
-2. Score questionnaire decisions against phase outcomes (did the chosen approach work?)
+1. Score the migration (build pass/fail, test pass rate, completeness from steps applied/total, fix effort)
+2. Score questionnaire decisions against phase outcomes (correlational — what outcomes are associated with each decision, not what each decision caused)
 3. Extract learned patterns (what worked, what struggled, what failed)
 
 ### Output
@@ -248,6 +250,6 @@ Stage skills find domain skills by reading frontmatter (`tags: [domain]`). No ha
 |-------|-------|--------|
 | Questionnaire | source repo | `.konveyor/questionnaire.json` |
 | Plan | questionnaire.json, analysis.json, domain skills | `.konveyor/spec.md`, `.konveyor/implementation.md`, `graph.json` |
-| Execute | .konveyor/implementation.md, domain skills | migrated source files + fix patches + `.konveyor/execute.json` |
+| Execute | .konveyor/implementation.md, domain skills | migrated source files + per-step commits + `.konveyor/execute.json` |
 | Eval | questionnaire.json, execute.json, .konveyor/implementation.md, git log | `.konveyor/eval.json` |
 | Report | questionnaire.json, execute.json, eval.json, .konveyor/spec.md, .konveyor/implementation.md | `.konveyor/report.md` |

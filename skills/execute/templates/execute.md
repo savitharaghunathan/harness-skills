@@ -7,6 +7,32 @@ the final build status, and test results.
 
 ```json
 {
+  "steps": [
+    {
+      "step": 1,
+      "title": "<step title>",
+      "phase": "<domain-skill-phase-name>",
+      "file": "<file path>",
+      "status": "applied",
+      "commit": "<commit hash>"
+    },
+    {
+      "step": 2,
+      "title": "<step title>",
+      "phase": "<domain-skill-phase-name>",
+      "file": "<file path>",
+      "status": "skipped",
+      "reason": "<why skipped>"
+    },
+    {
+      "step": 3,
+      "title": "<step title>",
+      "phase": "<domain-skill-phase-name>",
+      "file": "<file path>",
+      "status": "failed",
+      "error": "<error description>"
+    }
+  ],
   "phases": [
     {
       "name": "<phase-1-name>",
@@ -42,6 +68,21 @@ the final build status, and test results.
 ```
 
 ## Fields
+
+### steps
+
+One entry per step from `.konveyor/implementation.md`, in execution order.
+
+| Field | Description |
+|---|---|
+| `step` | Step number from the implementation plan |
+| `title` | Step title from the implementation plan |
+| `phase` | Domain skill phase this step belongs to |
+| `file` | File path this step operates on |
+| `status` | `applied`, `skipped`, or `failed` |
+| `commit` | Git commit hash (present when `status` is `applied`) |
+| `reason` | Why the step was skipped (present when `status` is `skipped`) |
+| `error` | Error description (present when `status` is `failed`) |
 
 ### phases
 

@@ -31,18 +31,19 @@ Evaluate overall migration quality from `execute.json`:
 
 - **Build**: pass or fail
 - **Tests**: pass rate (passed / total)
-- **Completeness**: phases completed vs total phases
+- **Completeness**: steps applied vs total steps (from `execute.json` `steps` array)
 - **Fix effort**: total fix iterations across all phases
 - **Remaining errors**: count of unresolved compiler errors
 
 ### 2. Score Questionnaire Decisions
 
 For each decision in `questionnaire.json`, assess against the phase outcomes
-in `execute.json`:
+in `execute.json`. Decision scoring is **correlational, not causal** — report
+what outcomes are associated with each decision, not what each decision caused:
 
-- Did the chosen approach work? (phase succeeded without excessive fix iterations)
-- Did any decision lead to problems? (phase failed or required max fix iterations)
-- Would a different option have been better? (based on the errors encountered)
+- Is the chosen approach associated with clean phases? (phase succeeded without excessive fix iterations)
+- Is any decision associated with problems? (phase failed or required max fix iterations)
+- Would a different option likely have produced better outcomes? (based on the errors encountered)
 
 ### 3. Extract Learned Patterns
 

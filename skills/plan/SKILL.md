@@ -131,12 +131,17 @@ decisions applied. Structure:
 
 ### Interactive mode
 
-If `KONVEYOR_PARAM_INTERACTIVE` is `true`: present `spec.md` for approval.
-Wait for the user to confirm before proceeding to Phase 3.
+If `KONVEYOR_PARAM_INTERACTIVE` is `true`: present `.konveyor/spec.md` for
+approval.
 
-### Non-interactive mode
+- If the user **approves**: proceed to Phase 3.
+- If the user **rejects**: ask what needs to change, revise the spec, and
+  re-present for approval. Repeat until approved.
 
-Proceed directly to Phase 3.
+### Non-interactive mode (default)
+
+If `KONVEYOR_PARAM_INTERACTIVE` is unset or not `true`: proceed directly to
+Phase 3. This is the default — interactive mode requires explicit opt-in.
 
 ---
 
@@ -179,18 +184,20 @@ Write `.konveyor/implementation.md` — step-by-step migration instructions.
 
 ### Rules for writing steps
 
-1. **One file per step** — never combine two files in one step
-2. **Exact paths** — use real paths from graph.json, not placeholders
-3. **Dependency order** — steps that others depend on come first
-4. **Phase order** — follow the domain skill's phase ordering
-5. **Hard steps flagged** — add `COMPLEX:` prefix for structural changes
-6. **DELETE steps last** — after all modifications are done
+1. **Phase on every step** — every step must have a `Phase:` matching a domain skill phase
+2. **One file per step** — never combine two files in one step
+3. **Exact paths** — use real paths from graph.json, not placeholders
+4. **Dependency order** — steps that others depend on come first
+5. **Phase order** — follow the domain skill's phase ordering
+6. **Hard steps flagged** — add `COMPLEX:` prefix for structural changes
+7. **DELETE steps last** — after all modifications are done
 
 ### Step detail levels
 
 **Mechanical** (simple find-replace):
 ```markdown
 ### Step 5: Migrate imports in <file>
+- Phase: <domain-skill-phase-name>
 - File: <exact path from graph.json>
 - Action: MODIFY
 - What to do: Replace all old namespace imports with new namespace imports
@@ -202,6 +209,7 @@ Write `.konveyor/implementation.md` — step-by-step migration instructions.
 **Complex** (structural/architectural changes — use domain skill patterns):
 ```markdown
 ### Step 14: COMPLEX — Convert message listener
+- Phase: <domain-skill-phase-name>
 - File: <path>
 - Action: MODIFY
 - What to do:
