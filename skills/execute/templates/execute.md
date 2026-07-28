@@ -57,6 +57,10 @@ per-step results, per-phase results, the final build status, and test results.
     "command": "<build command from domain skill>",
     "errors": []
   },
+  "smoke": {
+    "status": "pass|fail|skipped",
+    "command": "<smoke command from domain skill, if provided>"
+  },
   "tests": {
     "status": "pass|fail|skipped",
     "passed": 10,
@@ -74,7 +78,7 @@ per-step results, per-phase results, the final build status, and test results.
 | Value | Description |
 |---|---|
 | `completed` | All phases finished (build may still have failed on the last phase if `CONTINUE_ON_BUILD_FAIL` is set) |
-| `aborted` | Execution halted due to a build gate failure |
+| `aborted` | Execution halted due to a build or smoke gate failure |
 
 ### steps
 
@@ -113,6 +117,15 @@ Final build status after all phases complete.
 | `status` | `pass` or `fail` |
 | `command` | The build command used, from the domain skill's `metadata.build_command` |
 | `errors` | Any errors still outstanding at the end of execution |
+
+### smoke
+
+Result of the smoke gate. `skipped` if the domain skill does not provide `metadata.smoke_command`.
+
+| Field | Description |
+|---|---|
+| `status` | `pass`, `fail`, or `skipped` |
+| `command` | The smoke command used, from the domain skill's `metadata.smoke_command` |
 
 ### tests
 

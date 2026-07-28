@@ -54,10 +54,21 @@ from `.konveyor/implementation.md` whose `Phase:` field matches this phase.
 
 Run the build command from the domain skill's metadata (`metadata.build_command`).
 
-- If the build **succeeds** (exit code 0): proceed to the next phase
-- If the build **fails**: go to Step 3
+- If the build **succeeds** (exit code 0): go to Step 3
+- If the build **fails**: go to Step 4
 
-### Step 3 — Fix errors
+### Step 3 — Smoke gate (optional)
+
+If the domain skill provides `metadata.smoke_command`, run it after the build
+gate passes. This verifies runtime behavior — the app starts, dependencies
+resolve at runtime, and wiring works.
+
+- If the smoke **succeeds** (exit code 0): proceed to the next phase
+- If the smoke **fails**: go to Step 4
+
+If no `smoke_command` is provided, skip this step and proceed to the next phase.
+
+### Step 4 — Fix errors
 
 For each compiler error:
 
@@ -71,7 +82,7 @@ For each compiler error:
 - Minimal changes — do not refactor working code
 - Only touch the file reported in the error
 
-After fixing, re-run the build (Step 2). Repeat up to
+After fixing, re-run the build (Step 2) and smoke (Step 3). Repeat up to
 `KONVEYOR_PARAM_MAX_FIX_ITERATIONS` times (read from environment, default 3).
 
 If the build still fails after max iterations: record remaining errors,

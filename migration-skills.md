@@ -229,6 +229,7 @@ metadata:
   target: quarkus-3
   language: java
   build_command: mvn clean compile -DskipTests
+  smoke_command: mvn quarkus:dev &; sleep 15; curl -sf http://localhost:8080/q/health; kill %1
 ---
 ```
 
