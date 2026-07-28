@@ -79,10 +79,11 @@ the migration sequence.
 
 Before finalizing `.konveyor/implementation.md`, verify:
 
+- [ ] Every step has a `Phase:` matching a domain skill phase
 - [ ] Every file path is real (from graph.json), not a placeholder
 - [ ] Steps follow the domain skill's phase order
 - [ ] Dependencies between steps are explicit
 - [ ] God nodes are marked COMPLEX
 - [ ] DELETE steps come after MODIFY steps for the same area
-- [ ] Build/verification command is included from domain skill metadata
+- [ ] Build command is included from domain skill metadata (`metadata.build_command`)
 - [ ] One file per step — no combined steps

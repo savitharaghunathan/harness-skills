@@ -1,12 +1,13 @@
 # Execute Output Format
 
-The execute stage writes `.konveyor/execute.json` with per-phase results,
-the final build status, and test results.
+The execute stage writes `.konveyor/execute.json` with the overall run status,
+per-step results, per-phase results, the final build status, and test results.
 
 ## Schema
 
 ```json
 {
+  "status": "completed|aborted",
   "steps": [
     {
       "step": 1,
@@ -69,9 +70,18 @@ the final build status, and test results.
 
 ## Fields
 
+### status
+
+| Value | Description |
+|---|---|
+| `completed` | All phases finished (build may still have failed on the last phase if `CONTINUE_ON_BUILD_FAIL` is set) |
+| `aborted` | Execution halted due to a build gate failure |
+
 ### steps
 
 One entry per step from `.konveyor/implementation.md`, in execution order.
+On abort, all unrun steps are recorded with `status: "skipped"` and
+`reason: "build gate halt"`.
 
 | Field | Description |
 |---|---|
@@ -103,7 +113,7 @@ Final build status after all phases complete.
 | Field | Description |
 |---|---|
 | `status` | `pass` or `fail` |
-| `command` | The build command used, from the domain skill's `metadata.build_tool` |
+| `command` | The build command used, from the domain skill's `metadata.build_command` |
 | `errors` | Any errors still outstanding at the end of execution |
 
 ### tests

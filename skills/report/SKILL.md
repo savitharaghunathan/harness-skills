@@ -44,9 +44,10 @@ For each phase in `execute.json`:
 ### 3. What Remains
 
 From `execute.json`:
+- Run status (`completed` or `aborted`) — if aborted, state which phase halted and why
+- Skipped steps and their count
 - Failed phases and their remaining errors
 - Failing tests and their details
-- Any phases that hit max fix iterations
 
 ### 4. Quality Assessment
 
@@ -54,7 +55,7 @@ From `eval.json`:
 - Build status
 - Test pass rate
 - Completeness score
-- Decision outcomes — which choices worked, which struggled
+- Decision outcomes — which choices are associated with clean phases vs struggles (correlational, not causal)
 
 ### 5. Learned Patterns
 

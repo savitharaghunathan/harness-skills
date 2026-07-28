@@ -44,7 +44,7 @@ from `.konveyor/implementation.md` whose `Phase:` field matches this phase.
 
 ### Step 2 — Build gate
 
-Run the build command from the domain skill's metadata (`metadata.build_tool`).
+Run the build command from the domain skill's metadata (`metadata.build_command`).
 
 - If the build **succeeds** (exit code 0): proceed to the next phase
 - If the build **fails**: go to Step 3
@@ -63,11 +63,15 @@ For each compiler error:
 - Minimal changes — do not refactor working code
 - Only touch the file reported in the error
 
-After fixing, re-run the build (Step 2). Repeat up to
+After fixing, commit the fixes (`git commit -m "Fix: <phase> iteration <N>"`),
+then re-run the build (Step 2). Repeat up to
 `KONVEYOR_PARAM_MAX_FIX_ITERATIONS` times (read from environment, default 3).
 
-If the build still fails after max iterations: record remaining errors and
-**halt execution**. Do not proceed to the next phase.
+If the build still fails after max iterations: record remaining errors,
+mark all unrun steps in later phases as `skipped` (reason: `"build gate halt"`),
+commit the fix-iteration edits (`git commit -m "Fix: <phase> iteration <N>"`),
+and **halt execution**. Write `.konveyor/execute.json` with `status: "aborted"`
+before stopping.
 
 To override this behavior and continue despite build failures, set
 `KONVEYOR_PARAM_CONTINUE_ON_BUILD_FAIL=true` in the environment.
@@ -82,10 +86,22 @@ To override this behavior and continue despite build failures, set
 
 ---
 
+## Resume
+
+If `.konveyor/execute.json` already exists with `status: "aborted"`, resume
+from where execution stopped:
+
+1. Read the existing `execute.json` to find the last `applied` step
+2. Skip all steps already marked `applied` (their commits are in git history)
+3. Continue from the next step
+
 ## Output
 
 Write `.konveyor/execute.json`. See [templates/execute.md](templates/execute.md)
 for the full schema and field descriptions.
+
+Top-level `status` is `completed` when all phases finish, or `aborted` when
+halted by a build gate failure.
 
 Create the `.konveyor/` directory if it does not exist.
 
@@ -93,7 +109,7 @@ Create the `.konveyor/` directory if it does not exist.
 
 ## Rules
 
-- Work through ALL steps — completeness matters more than perfection
+- Work through all steps in the current phase before running the build gate
 - Follow the domain skill's phase order exactly
 - Select steps by `Phase:` field — only run steps matching the current phase
 - Halt on orphan steps (no matching domain phase) during startup validation

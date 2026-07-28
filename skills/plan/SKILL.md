@@ -47,7 +47,7 @@ their SKILL.md, modules, and references to understand:
 - Phase order (which transformations come first)
 - What patterns to look for in the graph
 - Mapping tables (dependencies, APIs, config, patterns)
-- Build gate commands
+- Build command (`metadata.build_command`)
 
 ### 1d. Understand the Project Architecture
 
@@ -176,7 +176,7 @@ Write `.konveyor/implementation.md` — step-by-step migration instructions.
 ...
 
 ## Verification
-<build command from domain skill metadata>
+<domain skill's metadata.build_command>
 
 ## Notes
 <gotchas, special cases>

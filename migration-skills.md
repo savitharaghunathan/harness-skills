@@ -129,7 +129,7 @@ description: >
 5. For each phase, select steps by `Phase:` field:
    - Apply transformations per the module instructions and reference tables
    - Git commit after each step
-   - Run the build gate (build command from domain skill metadata)
+   - Run the build gate (`metadata.build_command` from domain skill)
    - If build fails: fix errors iteratively (max `KONVEYOR_PARAM_MAX_FIX_ITERATIONS`, default 3)
    - If build still fails after max iterations: **halt** (override with `KONVEYOR_PARAM_CONTINUE_ON_BUILD_FAIL=true`)
 6. After all phases: run tests, report results (do not fix test failures)
@@ -229,6 +229,7 @@ metadata:
   source: java-ee-7
   target: quarkus-3
   language: java
+  build_command: mvn clean compile -DskipTests
 ---
 ```
 
