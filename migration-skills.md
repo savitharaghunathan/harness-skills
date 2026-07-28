@@ -128,7 +128,7 @@ description: >
 4. Follow the domain skill's phase order (e.g. build-config → app-config → ejb-to-cdi → ...)
 5. For each phase, select steps by `Phase:` field:
    - Apply transformations per the module instructions and reference tables
-   - Git commit after each step
+   - Do not run git commands — the harness manages commits
    - Run the build gate (`metadata.build_command` from domain skill)
    - If build fails: fix errors iteratively (max `KONVEYOR_PARAM_MAX_FIX_ITERATIONS`, default 3)
    - If build still fails after max iterations: **halt** (override with `KONVEYOR_PARAM_CONTINUE_ON_BUILD_FAIL=true`)
@@ -151,7 +151,7 @@ description: >
 
 ## Stage 4: Eval 
 
-Pure assessment. Reads `.konveyor/` artifacts and git log. Does not run builds or tests.
+Pure assessment. Reads `.konveyor/` artifacts. Does not run builds or tests.
 
 ```yaml
 ---
@@ -168,7 +168,6 @@ description: >
 - `.konveyor/questionnaire.json` — decisions made
 - `.konveyor/execute.json` — phase outcomes, fix iterations, build/test results
 - `.konveyor/implementation.md` — what was planned
-- Git log — what actually happened
 
 ### Process
 
@@ -251,6 +250,6 @@ Stage skills find domain skills by reading frontmatter (`tags: [domain]`). No ha
 |-------|-------|--------|
 | Questionnaire | source repo | `.konveyor/questionnaire.json` |
 | Plan | questionnaire.json, analysis.json, domain skills | `.konveyor/spec.md`, `.konveyor/implementation.md`, `graph.json` |
-| Execute | .konveyor/implementation.md, domain skills | migrated source files + per-step commits + `.konveyor/execute.json` |
-| Eval | questionnaire.json, execute.json, .konveyor/implementation.md, git log | `.konveyor/eval.json` |
+| Execute | .konveyor/implementation.md, domain skills | migrated source files + `.konveyor/execute.json` |
+| Eval | questionnaire.json, execute.json, .konveyor/implementation.md | `.konveyor/eval.json` |
 | Report | questionnaire.json, execute.json, eval.json, .konveyor/spec.md, .konveyor/implementation.md | `.konveyor/report.md` |

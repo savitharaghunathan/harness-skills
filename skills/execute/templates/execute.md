@@ -14,8 +14,7 @@ per-step results, per-phase results, the final build status, and test results.
       "title": "<step title>",
       "phase": "<domain-skill-phase-name>",
       "file": "<file path>",
-      "status": "applied",
-      "commit": "<commit hash>"
+      "status": "applied"
     },
     {
       "step": 2,
@@ -90,7 +89,6 @@ On abort, all unrun steps are recorded with `status: "skipped"` and
 | `phase` | Domain skill phase this step belongs to |
 | `file` | File path this step operates on |
 | `status` | `applied`, `skipped`, or `failed` |
-| `commit` | Git commit hash (present when `status` is `applied`) |
 | `reason` | Why the step was skipped (present when `status` is `skipped`) |
 | `error` | Error description (present when `status` is `failed`) |
 

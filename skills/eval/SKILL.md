@@ -4,22 +4,26 @@ tags: [stage]
 description: >
   Evaluates migration quality, scores questionnaire decisions,
   and extracts learned patterns for future runs.
+inputs:
+  - .konveyor/questionnaire.json
+  - .konveyor/execute.json
+  - .konveyor/implementation.md
+outputs:
+  - .konveyor/eval.json
 ---
 
 # Eval Stage
 
-Pure assessment. Reads `.konveyor/` artifacts and git log to evaluate how
-the migration went. Does not run builds or tests — trusts the execute stage's
-results.
+Pure assessment. Reads `.konveyor/` artifacts to evaluate how the migration
+went. Does not run builds or tests — trusts the execute stage's results.
 
 ---
 
 ## Inputs
 
 - `.konveyor/questionnaire.json` — decisions made before planning
-- `.konveyor/execute.json` — phase outcomes, fix iterations, build/test results
+- `.konveyor/execute.json` — step outcomes, phase outcomes, build/test results
 - `.konveyor/implementation.md` — what was planned
-- Git log — what actually changed
 
 ---
 
@@ -50,7 +54,7 @@ what outcomes are associated with each decision, not what each decision caused:
 
 ### 3. Extract Learned Patterns
 
-From the git log and execute.json, identify:
+From `execute.json`, identify:
 
 - **What worked**: phases that completed cleanly (0-1 fix iterations)
 - **What struggled**: phases that needed multiple fix iterations
@@ -64,6 +68,7 @@ From the git log and execute.json, identify:
 Write `.konveyor/eval.json`. See [templates/eval.md](templates/eval.md)
 for the full schema and field descriptions.
 
+Create the `.konveyor/` directory if it does not exist.
 
 ---
 

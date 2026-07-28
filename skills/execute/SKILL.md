@@ -5,6 +5,13 @@ description: >
   Reads the implementation plan and executes migrations phase by phase,
   following the domain skill's phases and modules. Runs the build gate
   after each phase, fixing compiler errors before proceeding.
+inputs:
+  - .konveyor/implementation.md
+  - .konveyor/questionnaire.json
+  - domain skills (tags: [domain])
+outputs:
+  - modified source files
+  - .konveyor/execute.json
 ---
 
 # Execute Stage
@@ -39,9 +46,8 @@ from `.konveyor/implementation.md` whose `Phase:` field matches this phase.
   1. Read the target file
   2. Apply transformations per the module instructions and reference tables
   3. Write the modified file
-  4. Git commit: `git commit -m "Step <N>: <step title>"`
-  5. Record step status as `applied`
-  6. If the step cannot be applied (file missing, transformation impossible):
+  4. Record step status as `applied`
+  5. If the step cannot be applied (file missing, transformation impossible):
      record step status as `failed` with the error, and continue to the next step
 
 ### Step 2 — Build gate
@@ -65,8 +71,7 @@ For each compiler error:
 - Minimal changes — do not refactor working code
 - Only touch the file reported in the error
 
-After fixing, commit the fixes (`git commit -m "Fix: <phase> iteration <N>"`),
-then re-run the build (Step 2). Repeat up to
+After fixing, re-run the build (Step 2). Repeat up to
 `KONVEYOR_PARAM_MAX_FIX_ITERATIONS` times (read from environment, default 3).
 
 If the build still fails after max iterations: record remaining errors,
@@ -102,8 +107,7 @@ from where execution stopped:
    continue the execution loop from the next phase
 5. If the build gate fails: re-enter the fix loop (Step 3) with a fresh
    iteration count
-6. Steps already marked `applied` are never re-run — their commits exist in
-   git history
+6. Steps already marked `applied` are never re-run
 
 ## Output
 
@@ -126,7 +130,7 @@ Create the `.konveyor/` directory if it does not exist.
 - Run the build gate after EVERY phase — do not skip
 - Fix only compiler errors, not warnings or style issues
 - Halt after max fix iterations unless `KONVEYOR_PARAM_CONTINUE_ON_BUILD_FAIL=true`
-- Git commit after every step
+- Do NOT run git commands — the harness manages commits
 - Do NOT modify `.konveyor/implementation.md` or `.konveyor/spec.md`
 - Do NOT re-read `.konveyor/implementation.md` after every step — read it once
 - If no domain skill is loaded, treat `.konveyor/implementation.md` as a flat step list

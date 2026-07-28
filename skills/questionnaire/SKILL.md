@@ -5,6 +5,11 @@ description: >
   Scans a project to detect its tech stack and gathers migration decisions
   through structured questions. Outputs questionnaire.json. Use as the first
   stage before planning.
+inputs:
+  - KONVEYOR_INSTRUCTIONS
+  - source repo
+outputs:
+  - .konveyor/questionnaire.json
 ---
 
 # Questionnaire Stage

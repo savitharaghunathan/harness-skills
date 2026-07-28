@@ -4,6 +4,14 @@ tags: [stage]
 description: >
   Generates a final migration report summarizing what was done,
   what remains, and quality assessment.
+inputs:
+  - .konveyor/questionnaire.json
+  - .konveyor/execute.json
+  - .konveyor/eval.json
+  - .konveyor/spec.md
+  - .konveyor/implementation.md
+outputs:
+  - .konveyor/report.md
 ---
 
 # Report Stage
@@ -68,10 +76,11 @@ From `eval.json`:
 
 ## Output
 
-Write `.konveyor/report.md` following the structure above. Use clear markdown
-formatting — headers, tables, bullet lists. This report is for the developer
-who will review and continue the migration.
+Write `.konveyor/report.md` using clear markdown formatting — headers, tables,
+bullet lists. This report is for the developer who will review and continue
+the migration.
 
+Create the `.konveyor/` directory if it does not exist.
 
 ---
 

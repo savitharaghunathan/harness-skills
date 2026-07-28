@@ -5,6 +5,14 @@ description: >
   Analyzes a project using graphify, reads questionnaire decisions and
   analysis results, produces a migration spec for approval, then generates
   a detailed implementation plan.
+inputs:
+  - KONVEYOR_INSTRUCTIONS
+  - .konveyor/questionnaire.json
+  - .konveyor/analysis.json (optional)
+  - domain skills (tags: [domain])
+outputs:
+  - .konveyor/spec.md
+  - .konveyor/implementation.md
 ---
 
 # Plan Stage
