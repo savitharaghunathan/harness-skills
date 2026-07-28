@@ -40,7 +40,9 @@ from `.konveyor/implementation.md` whose `Phase:` field matches this phase.
   2. Apply transformations per the module instructions and reference tables
   3. Write the modified file
   4. Git commit: `git commit -m "Step <N>: <step title>"`
-  5. Record step status as `applied` in the execution log
+  5. Record step status as `applied`
+  6. If the step cannot be applied (file missing, transformation impossible):
+     record step status as `failed` with the error, and continue to the next step
 
 ### Step 2 — Build gate
 
@@ -69,7 +71,6 @@ then re-run the build (Step 2). Repeat up to
 
 If the build still fails after max iterations: record remaining errors,
 mark all unrun steps in later phases as `skipped` (reason: `"build gate halt"`),
-commit the fix-iteration edits (`git commit -m "Fix: <phase> iteration <N>"`),
 and **halt execution**. Write `.konveyor/execute.json` with `status: "aborted"`
 before stopping.
 
@@ -84,6 +85,8 @@ To override this behavior and continue despite build failures, set
 2. Report test results (passed/failed/total counts)
 3. Do NOT attempt to fix failing tests — document them
 
+If execution was aborted, tests are skipped — record `tests.status: "skipped"`.
+
 ---
 
 ## Resume
@@ -91,9 +94,16 @@ To override this behavior and continue despite build failures, set
 If `.konveyor/execute.json` already exists with `status: "aborted"`, resume
 from where execution stopped:
 
-1. Read the existing `execute.json` to find the last `applied` step
-2. Skip all steps already marked `applied` (their commits are in git history)
-3. Continue from the next step
+1. Read the existing `execute.json`
+2. Find the phase that caused the abort (the last phase with `status: "partial"`)
+3. Re-run that phase's build gate (Step 2) — the tree may have been fixed
+   externally between runs
+4. If the build gate passes: clear all `skipped` steps back to pending and
+   continue the execution loop from the next phase
+5. If the build gate fails: re-enter the fix loop (Step 3) with a fresh
+   iteration count
+6. Steps already marked `applied` are never re-run — their commits exist in
+   git history
 
 ## Output
 

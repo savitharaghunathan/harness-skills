@@ -7,10 +7,14 @@ per-decision effectiveness breakdown, and pattern observations.
 
 ```json
 {
+  "run_status": "completed",
   "scores": {
     "build": "pass",
     "test_pass_rate": 0.83,
-    "completeness": 1.0,
+    "completeness": 0.85,
+    "steps_applied": 17,
+    "steps_skipped": 3,
+    "steps_failed": 0,
     "total_fix_iterations": 5,
     "remaining_errors": 0
   },
@@ -44,9 +48,13 @@ per-decision effectiveness breakdown, and pattern observations.
 
 | Field | Description |
 |---|---|
+| `run_status` | `completed` or `aborted`, from `execute.json` top-level `status` |
 | `build` | Final build status from `execute.json` (`pass` or `fail`) |
-| `test_pass_rate` | Passed tests / total tests, from `execute.json` |
-| `completeness` | Fraction of steps with `status: "applied"` in `execute.json` `steps` array |
+| `test_pass_rate` | Passed tests / total tests, from `execute.json`. `null` if tests were skipped (e.g. aborted run) |
+| `completeness` | `steps_applied / (steps_applied + steps_failed)`. Steps skipped due to build gate halt are excluded — they were never attempted |
+| `steps_applied` | Count of steps with `status: "applied"` |
+| `steps_skipped` | Count of steps with `status: "skipped"` (not counted against completeness) |
+| `steps_failed` | Count of steps with `status: "failed"` |
 | `total_fix_iterations` | Sum of `fix_iterations` across all phases |
 | `remaining_errors` | Count of unresolved compiler errors across all phases |
 

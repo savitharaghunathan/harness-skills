@@ -29,9 +29,12 @@ results.
 
 Evaluate overall migration quality from `execute.json`:
 
+- **Run status**: `completed` or `aborted` — if aborted, note which phase halted
 - **Build**: pass or fail
-- **Tests**: pass rate (passed / total)
-- **Completeness**: steps applied vs total steps (from `execute.json` `steps` array)
+- **Tests**: pass rate (passed / total); `skipped` if run was aborted before tests
+- **Completeness**: steps `applied` vs total steps (from `execute.json` `steps` array).
+  Steps with `status: "skipped"` due to `"build gate halt"` are not counted as
+  failures — they were never attempted. Report them separately.
 - **Fix effort**: total fix iterations across all phases
 - **Remaining errors**: count of unresolved compiler errors
 

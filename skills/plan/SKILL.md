@@ -219,10 +219,37 @@ Write `.konveyor/implementation.md` — step-by-step migration instructions.
         1. Remove: <old imports/annotations/methods>
         2. Add: <new imports/annotations>
         3. Replace: <method signatures, configuration>
-    - Affected files: <config files that also need updates>
 - Why: <from domain skill — why the old pattern isn't supported>
 - Depends on: Step X, Step Y
 - Verify: <from domain skill — grep checks, compile commands>
+```
+
+If a complex change also requires config file updates, create a separate step
+for each config file rather than listing them as "Affected files" — one file
+per step, always.
+
+**CREATE** (new file):
+```markdown
+### Step 3: Create Quarkus application.properties
+- Phase: <domain-skill-phase-name>
+- File: src/main/resources/application.properties
+- Action: CREATE
+- What to do: Create file with <specific content from domain skill>
+- Why: <target framework requires this config file>
+- Depends on: Step 1
+- Verify: File exists with required properties
+```
+
+**DELETE** (remove file):
+```markdown
+### Step 20: Remove legacy deployment descriptor
+- Phase: <domain-skill-phase-name>
+- File: src/main/webapp/WEB-INF/web.xml
+- Action: DELETE
+- What to do: Delete this file — no longer needed by target framework
+- Why: <target framework does not use deployment descriptors>
+- Depends on: Step 14, Step 15
+- Verify: File no longer exists
 ```
 
 ---

@@ -12,6 +12,11 @@ description: >
 Scans the project to understand what it is, then asks the migration decisions
 that need to be made before planning can begin.
 
+## Inputs
+
+- `KONVEYOR_INSTRUCTIONS` — migration goal (read this to understand what kind
+  of migration is being attempted, so detection and decisions are targeted)
+
 ---
 
 ## Phase 1 — Detect
