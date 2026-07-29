@@ -2,9 +2,10 @@
 name: questionnaire
 tags: [stage]
 description: >
-  Scans a project to detect its tech stack and gathers migration decisions
-  through structured questions. Outputs questionnaire.json. Use as the first
-  stage before planning.
+  Scan the project, detect its tech stack, gather migration decisions
+  (interactive or non-interactive based on KONVEYOR_PARAM_INTERACTIVE),
+  write .konveyor/questionnaire.json, and commit it.
+  The stage is NOT complete until the commit succeeds.
 inputs:
   - KONVEYOR_INSTRUCTIONS
   - source repo
