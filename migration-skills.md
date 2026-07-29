@@ -128,7 +128,7 @@ description: >
 4. Follow the domain skill's phase order (e.g. build-config → app-config → ejb-to-cdi → ...)
 5. For each phase, select steps by `Phase:` field:
    - Apply transformations per the module instructions and reference tables
-   - Do not run git commands — the harness manages commits
+   - Commit after each step — do not push
    - Run the build gate (`metadata.build_command` from domain skill)
    - If build fails: fix errors iteratively (max `KONVEYOR_PARAM_MAX_FIX_ITERATIONS`, default 3)
    - If build still fails after max iterations: **halt** (override with `KONVEYOR_PARAM_CONTINUE_ON_BUILD_FAIL=true`)

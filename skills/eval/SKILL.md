@@ -72,9 +72,23 @@ Create the `.konveyor/` directory if it does not exist.
 
 ---
 
+## Commit
+
+After writing the output, commit it:
+
+```bash
+git add .konveyor/eval.json
+git commit -m "Add eval results"
+```
+
+Do NOT push.
+
+---
+
 ## Rules
 
 - Do NOT run builds or tests — trust `execute.json`
 - Do NOT modify any source files
 - Do NOT re-execute any migration steps
 - Read `.konveyor/` artifacts as the source of truth
+- Commit eval output when done — do NOT push

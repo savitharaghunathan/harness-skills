@@ -270,9 +270,23 @@ Create the `.konveyor/` directory if it does not exist.
 
 ---
 
+## Commit
+
+After writing all outputs, commit them:
+
+```bash
+git add .konveyor/spec.md .konveyor/implementation.md
+git commit -m "Add migration plan and spec"
+```
+
+Do NOT push.
+
+---
+
 ## Rules
 
 - Do NOT modify source files — planning only
 - Do NOT execute any migration steps
 - Do NOT skip graphify — the graph is essential for later stages
 - Follow the domain skill's phase order when structuring steps
+- Commit plan outputs when done — do NOT push

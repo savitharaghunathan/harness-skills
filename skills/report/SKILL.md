@@ -84,6 +84,19 @@ Create the `.konveyor/` directory if it does not exist.
 
 ---
 
+## Commit
+
+After writing the output, commit it:
+
+```bash
+git add .konveyor/report.md
+git commit -m "Add migration report"
+```
+
+Do NOT push.
+
+---
+
 ## Rules
 
 - Do NOT run builds or tests
@@ -91,3 +104,4 @@ Create the `.konveyor/` directory if it does not exist.
 - Do NOT re-execute any migration steps
 - Trust `.konveyor/` artifacts as the source of truth
 - Write a report that a developer can act on without re-reading all artifacts
+- Commit report output when done — do NOT push

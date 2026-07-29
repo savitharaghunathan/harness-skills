@@ -46,8 +46,10 @@ from `.konveyor/implementation.md` whose `Phase:` field matches this phase.
   1. Read the target file
   2. Apply transformations per the module instructions and reference tables
   3. Write the modified file
-  4. Record step status as `applied`
-  5. If the step cannot be applied (file missing, transformation impossible):
+  4. Run: `git add -A && git commit -m "<describe the migration change>"`
+  5. Record the commit hash from the output
+  6. Record step status as `applied` with the commit hash
+  6. If the step cannot be applied (file missing, transformation impossible):
      record step status as `failed` with the error, and continue to the next step
 
 ### Step 2 — Build gate
@@ -76,6 +78,7 @@ For each compiler error:
 2. Read the source file
 3. Apply a minimal, conservative fix
 4. Consult the domain skill's references for common error-fix mappings
+5. Run: `git add -A && git commit -m "Fix: <describe what was fixed>"`
 
 **Fix rules:**
 - Fix ONLY compiler errors, not warnings
@@ -130,6 +133,15 @@ halted by a build gate failure.
 
 Create the `.konveyor/` directory if it does not exist.
 
+After writing `execute.json`, commit it:
+
+```bash
+git add .konveyor/execute.json
+git commit -m "Add execute results"
+```
+
+Do NOT push.
+
 ---
 
 ## Rules
@@ -141,7 +153,7 @@ Create the `.konveyor/` directory if it does not exist.
 - Run the build gate after EVERY phase — do not skip
 - Fix only compiler errors, not warnings or style issues
 - Halt after max fix iterations unless `KONVEYOR_PARAM_CONTINUE_ON_BUILD_FAIL=true`
-- Do NOT run git commands — the harness manages commits
+- Commit after each step and each fix iteration — do NOT push
 - Do NOT modify `.konveyor/implementation.md` or `.konveyor/spec.md`
 - Do NOT re-read `.konveyor/implementation.md` after every step — read it once
 - If no domain skill is loaded, treat `.konveyor/implementation.md` as a flat step list

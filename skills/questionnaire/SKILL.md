@@ -70,6 +70,20 @@ Create the `.konveyor/` directory if it does not exist.
 
 ---
 
+## Commit
+
+After writing the output, commit it:
+
+```bash
+git add .konveyor/questionnaire.json
+git commit -m "Add questionnaire results"
+```
+
+Do NOT push.
+
+---
+
 ## Rules
 
 - Keep detection lightweight — read manifests and scan imports, nothing more
+- Commit questionnaire output when done — do NOT push
