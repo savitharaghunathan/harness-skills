@@ -9,7 +9,7 @@ inputs:
   - KONVEYOR_INSTRUCTIONS
   - .konveyor/questionnaire.json
   - .konveyor/analysis.json (optional)
-  - domain skills (tags: [domain])
+  - domain skills
 outputs:
   - .konveyor/spec.md
   - .konveyor/implementation.md
