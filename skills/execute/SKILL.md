@@ -8,7 +8,7 @@ description: >
 inputs:
   - .konveyor/implementation.md
   - .konveyor/questionnaire.json
-  - domain skills (tags: [domain])
+  - domain skills
 outputs:
   - modified source files
   - .konveyor/execute.json
