@@ -46,7 +46,7 @@ from `.konveyor/implementation.md` whose `Phase:` field matches this phase.
   1. Read the target file
   2. Apply transformations per the module instructions and reference tables
   3. Write the modified file
-  4. Run: `git add -A && git commit -m "<describe the migration change>"`
+  4. Run: `git add -A && git commit -m "Step <N>: <short description of the migration change>"`
   5. Record the commit hash from the output
   6. Record step status as `applied` with the commit hash
   6. If the step cannot be applied (file missing, transformation impossible):
