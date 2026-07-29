@@ -74,19 +74,16 @@ From `eval.json`:
 
 ---
 
-## Output
+## Phase 2 — Write Output and Commit
 
-Write `.konveyor/report.md` using clear markdown formatting — headers, tables,
-bullet lists. This report is for the developer who will review and continue
-the migration.
+You MUST complete this phase — the stage is not done until the report is
+written and committed.
 
-Create the `.konveyor/` directory if it does not exist.
-
----
-
-## Commit
-
-After writing the output, commit it:
+1. Create the `.konveyor/` directory if it does not exist
+2. Write `.konveyor/report.md` using clear markdown formatting — headers, tables,
+   bullet lists. This report is for the developer who will review and continue
+   the migration.
+3. Commit the output:
 
 ```bash
 git add .konveyor/report.md
@@ -94,6 +91,8 @@ git commit -m "Add migration report"
 ```
 
 Do NOT push.
+
+The stage is NOT complete until `report.md` is written and committed.
 
 ---
 
@@ -104,4 +103,5 @@ Do NOT push.
 - Do NOT re-execute any migration steps
 - Trust `.konveyor/` artifacts as the source of truth
 - Write a report that a developer can act on without re-reading all artifacts
+- You MUST write `.konveyor/report.md` before finishing
 - Commit report output when done — do NOT push

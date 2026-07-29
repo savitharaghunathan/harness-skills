@@ -123,17 +123,16 @@ from where execution stopped:
    iteration count
 6. Steps already marked `applied` are never re-run
 
-## Output
+## Write Output and Commit
 
-Write `.konveyor/execute.json`. See [templates/execute.md](templates/execute.md)
-for the full schema and field descriptions.
+You MUST complete this step — execution is not done until `execute.json` is
+written and committed.
 
-Top-level `status` is `completed` when all phases finish, or `aborted` when
-halted by a build gate failure.
-
-Create the `.konveyor/` directory if it does not exist.
-
-After writing `execute.json`, commit it:
+1. Create the `.konveyor/` directory if it does not exist
+2. Write `.konveyor/execute.json` — see [templates/execute.md](templates/execute.md)
+   for the full schema and field descriptions. Top-level `status` is `completed`
+   when all phases finish, or `aborted` when halted by a build gate failure.
+3. Commit the output:
 
 ```bash
 git add .konveyor/execute.json
@@ -141,6 +140,8 @@ git commit -m "Add execute results"
 ```
 
 Do NOT push.
+
+The stage is NOT complete until `execute.json` is written and committed.
 
 ---
 
@@ -154,6 +155,7 @@ Do NOT push.
 - Fix only compiler errors, not warnings or style issues
 - Halt after max fix iterations unless `KONVEYOR_PARAM_CONTINUE_ON_BUILD_FAIL=true`
 - Commit after each step and each fix iteration — do NOT push
+- You MUST write `.konveyor/execute.json` before finishing
 - Do NOT modify `.konveyor/implementation.md` or `.konveyor/spec.md`
 - Do NOT re-read `.konveyor/implementation.md` after every step — read it once
 - If no domain skill is loaded, treat `.konveyor/implementation.md` as a flat step list

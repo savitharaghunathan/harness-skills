@@ -63,18 +63,15 @@ From `execute.json`, identify:
 
 ---
 
-## Output
+## Phase 4 — Write Output and Commit
 
-Write `.konveyor/eval.json`. See [templates/eval.md](templates/eval.md)
-for the full schema and field descriptions.
+You MUST complete this phase — evaluation is not done until the output is
+written and committed.
 
-Create the `.konveyor/` directory if it does not exist.
-
----
-
-## Commit
-
-After writing the output, commit it:
+1. Create the `.konveyor/` directory if it does not exist
+2. Write `.konveyor/eval.json` — see [templates/eval.md](templates/eval.md)
+   for the full schema and field descriptions
+3. Commit the output:
 
 ```bash
 git add .konveyor/eval.json
@@ -82,6 +79,8 @@ git commit -m "Add eval results"
 ```
 
 Do NOT push.
+
+The stage is NOT complete until `eval.json` is written and committed.
 
 ---
 
@@ -91,4 +90,5 @@ Do NOT push.
 - Do NOT modify any source files
 - Do NOT re-execute any migration steps
 - Read `.konveyor/` artifacts as the source of truth
+- You MUST write `.konveyor/eval.json` before finishing
 - Commit eval output when done — do NOT push

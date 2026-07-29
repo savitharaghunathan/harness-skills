@@ -262,17 +262,15 @@ per step, always.
 
 ---
 
-## Output
+## Phase 4 — Write Output and Commit
 
-Write `.konveyor/spec.md` and `.konveyor/implementation.md`.
+You MUST complete this phase — planning is not done until outputs are written
+and committed.
 
-Create the `.konveyor/` directory if it does not exist.
-
----
-
-## Commit
-
-After writing all outputs, commit them:
+1. Create the `.konveyor/` directory if it does not exist
+2. Write `.konveyor/spec.md`
+3. Write `.konveyor/implementation.md`
+4. Commit the outputs:
 
 ```bash
 git add .konveyor/spec.md .konveyor/implementation.md
@@ -280,6 +278,8 @@ git commit -m "Add migration plan and spec"
 ```
 
 Do NOT push.
+
+The stage is NOT complete until both files are written and committed.
 
 ---
 
@@ -289,4 +289,5 @@ Do NOT push.
 - Do NOT execute any migration steps
 - Do NOT skip graphify — the graph is essential for later stages
 - Follow the domain skill's phase order when structuring steps
+- You MUST write `.konveyor/spec.md` and `.konveyor/implementation.md` before finishing
 - Commit plan outputs when done — do NOT push

@@ -61,18 +61,14 @@ Do not wait for answers — proceed through all decisions autonomously.
 
 ---
 
-## Output
+## Phase 3 — Write Output and Commit
 
-Write `.konveyor/questionnaire.json`. See [templates/questionnaire.md](templates/questionnaire.md)
-for the full schema and field descriptions.
+You MUST complete this phase — detection alone is not enough.
 
-Create the `.konveyor/` directory if it does not exist.
-
----
-
-## Commit
-
-After writing the output, commit it:
+1. Create the `.konveyor/` directory if it does not exist
+2. Write `.konveyor/questionnaire.json` — see [templates/questionnaire.md](templates/questionnaire.md)
+   for the full schema and field descriptions
+3. Commit the output:
 
 ```bash
 git add .konveyor/questionnaire.json
@@ -81,9 +77,12 @@ git commit -m "Add questionnaire results"
 
 Do NOT push.
 
+The stage is NOT complete until `questionnaire.json` is written and committed.
+
 ---
 
 ## Rules
 
 - Keep detection lightweight — read manifests and scan imports, nothing more
+- You MUST write `.konveyor/questionnaire.json` before finishing
 - Commit questionnaire output when done — do NOT push
