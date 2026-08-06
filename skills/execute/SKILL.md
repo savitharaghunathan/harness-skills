@@ -2,13 +2,14 @@
 name: execute
 tags: [stage]
 description: >
-  Reads the implementation plan and executes migrations phase by phase,
-  following the domain skill's phases and modules. Runs the build gate
-  after each phase, fixing compiler errors before proceeding.
+  Reads the implementation plan and executes migrations phase by phase.
+  If domain skills are available, follows their phases and modules.
+  Runs the build gate after each phase, fixing compiler errors before
+  proceeding.
 inputs:
   - .konveyor/implementation.md
   - .konveyor/questionnaire.json
-  - domain skills
+  - domain skills (optional)
 outputs:
   - modified source files
   - .konveyor/execute.json
@@ -16,32 +17,35 @@ outputs:
 
 # Execute Stage
 
-Executes the migration by following the implementation plan and domain skill
-phases. Runs the build gate after each phase and fixes errors before moving on.
+Executes the migration by following the implementation plan. If domain skills
+are available, follows their phases and modules. Runs the build gate after
+each phase and fixes errors before moving on.
 
 ---
 
 ## Startup
 
 1. Read `.konveyor/implementation.md`
-2. Scan `/opt/skills/` for skills with `tags: [domain]` in their frontmatter
-3. Read the domain skill's phases, modules, and references
-4. Read `.konveyor/questionnaire.json` for context on decisions made
-5. Validate that every step in `.konveyor/implementation.md` has a `Phase:` field
-   matching a domain skill phase. If any step has no match (orphan), halt with
-   an error listing the orphan steps.
+2. Read `.konveyor/questionnaire.json` for context on decisions made
+3. Scan `/opt/skills/` for skills with `tags: [domain]` in their frontmatter
+4. If domain skills are found: read their phases, modules, and references.
+   Validate that every step's `Phase:` field matches a domain skill phase —
+   halt on orphans.
+5. If no domain skills are found: group steps by their `Phase:` field (as
+   set by the plan stage). Detect the build command from the build manifest
+   if not specified in `implementation.md`.
 
 ---
 
 ## Execution Loop
 
-Follow the domain skill's phase order. For each phase, select only the steps
-from `.konveyor/implementation.md` whose `Phase:` field matches this phase.
+Follow the phase order (from domain skill if present, or from the plan's
+grouping). For each phase, select only the steps from
+`.konveyor/implementation.md` whose `Phase:` field matches this phase.
 
 ### Step 1 — Apply transformations
 
-- Read the domain skill's module for this phase
-- Read the domain skill's reference tables (dependency-map, api-map, config-map, pattern-map), if they exist
+- If domain skills are present: read the module and reference tables for this phase
 - For each step belonging to this phase:
   1. Read the target file
   2. Apply transformations per the module instructions and reference tables
@@ -54,21 +58,22 @@ from `.konveyor/implementation.md` whose `Phase:` field matches this phase.
 
 ### Step 2 — Build gate
 
-Run the build command from the domain skill's metadata (`metadata.build_command`).
+Run the build command (`metadata.build_command` from domain skill, or from
+`implementation.md`'s Verification section, or auto-detected from build manifest).
 
 - If the build **succeeds** (exit code 0): go to Step 3
 - If the build **fails**: go to Step 4
 
 ### Step 3 — Smoke gate (optional)
 
-If the domain skill provides `metadata.smoke_command`, run it after the build
-gate passes. This verifies runtime behavior — the app starts, dependencies
-resolve at runtime, and wiring works.
+If a `smoke_command` is available (from domain skill `metadata.smoke_command`
+or `implementation.md`), run it after the build gate passes. This verifies
+runtime behavior — the app starts, dependencies resolve, and wiring works.
 
 - If the smoke **succeeds** (exit code 0): proceed to the next phase
 - If the smoke **fails**: go to Step 4
 
-If no `smoke_command` is provided, skip this step and proceed to the next phase.
+If no `smoke_command` is available, skip this step and proceed to the next phase.
 
 ### Step 4 — Fix errors
 
@@ -77,7 +82,7 @@ For each compiler error:
 1. Read the error message to identify the file and issue
 2. Read the source file
 3. Apply a minimal, conservative fix
-4. Consult the domain skill's references for common error-fix mappings
+4. Consult the domain skill's references for common error-fix mappings (if available)
 5. Run: `git add -A && git commit -m "Fix: <describe what was fixed>"`
 
 **Fix rules:**
@@ -145,9 +150,9 @@ The stage is NOT complete until `execute.json` is written and committed.
 ## Rules
 
 - Work through all steps in the current phase before running the build gate
-- Follow the domain skill's phase order exactly
+- Follow the phase order (from domain skill if present, or from the plan)
 - Select steps by `Phase:` field — only run steps matching the current phase
-- Halt on orphan steps (no matching domain phase) during startup validation
+- If domain skills are present: halt on orphan steps during startup validation
 - Run the build gate after EVERY phase — do not skip
 - Fix only compiler errors, not warnings or style issues
 - Halt after 3 fix iterations — do not continue on build failure
@@ -155,5 +160,5 @@ The stage is NOT complete until `execute.json` is written and committed.
 - You MUST write `.konveyor/execute.json` before finishing
 - Do NOT modify `.konveyor/implementation.md` or `.konveyor/spec.md`
 - Do NOT re-read `.konveyor/implementation.md` after every step — read it once
-- If no domain skill is loaded, treat `.konveyor/implementation.md` as a flat step list
-  and run the build after all steps are complete
+- If no domain skills are loaded, use the plan's phase grouping and detect
+  the build command from `implementation.md` or the build manifest
