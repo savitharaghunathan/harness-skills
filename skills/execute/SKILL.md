@@ -86,15 +86,12 @@ For each compiler error:
 - Only touch the file reported in the error
 
 After fixing, re-run the build (Step 2) and smoke (Step 3). Repeat up to
-`KONVEYOR_PARAM_MAX_FIX_ITERATIONS` times (read from environment, default 3).
+3 times.
 
-If the build still fails after max iterations: record remaining errors,
+If the build still fails after 3 attempts: record remaining errors,
 mark all unrun steps in later phases as `skipped` (reason: `"build gate halt"`),
 and **halt execution**. Write `.konveyor/execute.json` with `status: "aborted"`
 before stopping.
-
-To override this behavior and continue despite build failures, set
-`KONVEYOR_PARAM_CONTINUE_ON_BUILD_FAIL=true` in the environment.
 
 ---
 
@@ -153,7 +150,7 @@ The stage is NOT complete until `execute.json` is written and committed.
 - Halt on orphan steps (no matching domain phase) during startup validation
 - Run the build gate after EVERY phase — do not skip
 - Fix only compiler errors, not warnings or style issues
-- Halt after max fix iterations unless `KONVEYOR_PARAM_CONTINUE_ON_BUILD_FAIL=true`
+- Halt after 3 fix iterations — do not continue on build failure
 - Commit after each step and each fix iteration — do NOT push
 - You MUST write `.konveyor/execute.json` before finishing
 - Do NOT modify `.konveyor/implementation.md` or `.konveyor/spec.md`

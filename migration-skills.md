@@ -130,8 +130,8 @@ description: >
    - Apply transformations per the module instructions and reference tables
    - Commit after each step — do not push
    - Run the build gate (`metadata.build_command` from domain skill)
-   - If build fails: fix errors iteratively (max `KONVEYOR_PARAM_MAX_FIX_ITERATIONS`, default 3)
-   - If build still fails after max iterations: **halt** (override with `KONVEYOR_PARAM_CONTINUE_ON_BUILD_FAIL=true`)
+   - If build fails: fix errors iteratively (up to 3 attempts)
+   - If build still fails after 3 attempts: **halt**
 6. After all phases: run tests, report results (do not fix test failures)
 7. Write `.konveyor/execute.json` — per-step status, per-phase results, build/test results
 
