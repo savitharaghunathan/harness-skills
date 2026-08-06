@@ -81,14 +81,14 @@ description: >
 - `KONVEYOR_INSTRUCTIONS` — migration goal (primary)
 - `.konveyor/questionnaire.json` — decisions from prior stage
 - `.konveyor/analysis.json` — Kantra rule violations and patterns (if present, written by harness from Hub)
-- Domain skills (`tags: [domain]`) — migration knowledge (phases, modules, references)
+- Domain skills (`tags: [domain]`) — migration knowledge (optional)
 
 ### Phase 1 — Analyze
 
 1. Read `questionnaire.json` for decisions
 2. Read `analysis.json` if present for rule violations
 3. Run `graphify update` to produce `graph.json`
-4. Read loaded domain skills (scan `/opt/skills`, find `tags: [domain]`)
+4. Read loaded domain skills if present (scan `/opt/skills`, find `tags: [domain]`)
 5. Selectively read complex source files (max 5-8)
 
 ### Phase 2 — Spec
@@ -99,7 +99,7 @@ Interactive (`KONVEYOR_PARAM_INTERACTIVE=true`): present for approval. If reject
 
 ### Phase 3 — Implementation Plan
 
-Write `.konveyor/implementation.md` — step-by-step migration instructions. One step per file, dependency order, complex steps flagged. Every step must include a `Phase:` field matching a domain skill phase.
+Write `.konveyor/implementation.md` — step-by-step migration instructions. One step per file, dependency order, complex steps flagged. Every step must include a `Phase:` field (from domain skill if present, or a logical grouping).
 
 
 
@@ -107,31 +107,30 @@ Write `.konveyor/implementation.md` — step-by-step migration instructions. One
 
 ## Stage 3: Execute 
 
-Executes the implementation plan following domain skill phases. Runs the build gate after each phase and fixes errors before moving on. Absorbs the verify stage — no separate verify skill.
+Executes the implementation plan phase by phase. If domain skills are available, follows their phases and modules. Runs the build gate after each phase and fixes errors before moving on. Absorbs the verify stage — no separate verify skill.
 
 ```yaml
 ---
 name: execute
 tags: [stage]
 description: >
-  Reads the implementation plan and executes migrations phase by phase,
-  following the domain skill's phases and modules. Runs the build gate
-  after each phase, fixing compiler errors before proceeding.
+  Reads the implementation plan and executes migrations phase by phase.
+  If domain skills are available, follows their phases and modules. Runs
+  the build gate after each phase, fixing compiler errors before proceeding.
 ---
 ```
 
 ### Process
 
 1. Read `.konveyor/implementation.md`
-2. Find loaded domain skills (`tags: [domain]`), read their phases, modules, and references
-3. Validate every step has a `Phase:` matching a domain skill phase — halt on orphans
-4. Follow the domain skill's phase order (e.g. build-config → app-config → ejb-to-cdi → ...)
-5. For each phase, select steps by `Phase:` field:
-   - Apply transformations per the module instructions and reference tables
+2. If domain skills are present: read their phases, modules, and references; validate Phase: fields
+3. Follow the phase order (from domain skill or the plan's grouping)
+4. For each phase, select steps by `Phase:` field:
+   - Apply transformations (using domain skill modules/references if available)
    - Commit after each step — do not push
-   - Run the build gate (`metadata.build_command` from domain skill)
-   - If build fails: fix errors iteratively (max `KONVEYOR_PARAM_MAX_FIX_ITERATIONS`, default 3)
-   - If build still fails after max iterations: **halt** (override with `KONVEYOR_PARAM_CONTINUE_ON_BUILD_FAIL=true`)
+   - Run the build gate (build command from domain skill, implementation.md, or auto-detected)
+   - If build fails: fix errors iteratively (up to 3 attempts)
+   - If build still fails after 3 attempts: **halt**
 6. After all phases: run tests, report results (do not fix test failures)
 7. Write `.konveyor/execute.json` — per-step status, per-phase results, build/test results
 
@@ -143,8 +142,8 @@ description: >
 
 - Combines execute + verify into one stage
 - Reads `.konveyor/implementation.md` instead of `PLAN.md`
-- Follows domain skill phases with build gates, not just a flat step list
-- Discovers domain skills via `tags: [domain]` frontmatter
+- Follows phases with build gates (domain skill phases if present, or plan's grouping)
+- Discovers domain skills via `tags: [domain]` frontmatter (optional)
 - `tags: [stage]` in frontmatter
 
 ---
@@ -250,7 +249,7 @@ Stage skills find domain skills by reading frontmatter (`tags: [domain]`). No ha
 | Stage | Reads | Writes |
 |-------|-------|--------|
 | Questionnaire | source repo | `.konveyor/questionnaire.json` |
-| Plan | questionnaire.json, analysis.json, domain skills | `.konveyor/spec.md`, `.konveyor/implementation.md`, `graph.json` |
-| Execute | .konveyor/implementation.md, domain skills | migrated source files + `.konveyor/execute.json` |
+| Plan | questionnaire.json, analysis.json, domain skills (optional) | `.konveyor/spec.md`, `.konveyor/implementation.md`, `graph.json` |
+| Execute | .konveyor/implementation.md, domain skills (optional) | migrated source files + `.konveyor/execute.json` |
 | Eval | questionnaire.json, execute.json, .konveyor/implementation.md | `.konveyor/eval.json` |
 | Report | questionnaire.json, execute.json, eval.json, .konveyor/spec.md, .konveyor/implementation.md | `.konveyor/report.md` |

@@ -9,40 +9,42 @@ description: >
 
 ## Graph-Powered Discovery
 
-The code graph (`graph.json`) produced by `graphify update` is the foundation
-of the planning process. It lets you understand a project's architecture without
-reading every file.
+The code graph produced by `graphify update` is the foundation of the planning
+process. Query it using graphify CLI commands — do NOT read `graph.json` manually.
 
-### What the graph provides
+### Graphify query commands
 
-| Graph Feature | Planning Use |
+| Command | Planning Use |
 |---|---|
-| Communities | Architectural layers (build, models, services, API) |
-| Edges | Dependency flow — who depends on what |
-| God nodes (degree > 20) | High-risk files that affect many others |
-| Node attributes: imports | Which namespaces/packages are used |
-| Node attributes: annotations | Which patterns are used (DI, persistence, messaging) |
-| Node attributes: file path | Exact paths for plan steps |
+| `graphify query "<question>"` | BFS/DFS traversal — ask about layers, patterns, imports, annotations. Use `--dfs` for depth-first, `--budget N` to cap tokens. |
+| `graphify path "A" "B"` | Shortest dependency path between two nodes — traces chains without reading files. |
+| `graphify explain "X"` | Plain-language explanation of a node and its neighbors. |
+| `graphify affected "X"` | Reverse traversal — all nodes impacted by X. Use `--depth N` and `--relation R` to filter. |
 
-### Reading the graph
+### Discovery workflow
 
-1. Start with communities — each is an architectural layer
-2. Identify god nodes — these are COMPLEX and need source reading
-3. Check node imports/annotations against domain skill patterns
-4. Use edges to determine dependency order (migrate dependencies first)
+1. **Understand layers** — query for architectural structure (packages, modules, namespaces)
+2. **Find central nodes** — query for high-degree nodes with many dependencies
+3. **Match patterns** — query for migration-relevant patterns (from domain skill transformation rules if present, or based on detected source/target technologies)
+4. **Trace dependencies** — use `graphify path` for specific dependency chains between components
+5. **Assess impact** — use `graphify affected` on central or complex nodes before ordering phases
 
-### Community → Layer mapping
+### Community → Phase mapping
 
-Communities cluster files that are tightly coupled. Map them to migration layers:
+Communities cluster files that are tightly coupled. Map them to the domain
+skill's phases based on what the files contain and how they relate.
 
-- **1-file communities** with build manifests → Build config layer
-- **Small communities** with data classes → Model/entity layer
-- **Medium communities** with business logic → Service layer
-- **Large communities** with many edges → API/controller layer
-- **Isolated nodes** → Utilities, helpers, or config files
+General heuristics:
 
-The domain skill defines the phase order. Map communities to phases to get
-the migration sequence.
+- **1-file communities** with build manifests → build config phase
+- **Small communities** with data types → model/entity phase
+- **Medium communities** with business logic → core logic phase
+- **Large communities** with many edges → API/interface phase
+- **Isolated nodes** → utilities, helpers, or config files
+
+If domain skills are present, they define the phase names and order. Map
+communities to those phases. Otherwise, define your own logical phases
+based on the project structure.
 
 ---
 
@@ -57,21 +59,22 @@ the migration sequence.
 
 ### Decision matrix
 
-| Graph tells you... | Action |
+| Graphify query tells you... | Action |
 |---|---|
-| Only namespace imports to change | Don't read — plan from graph |
-| Only annotation swaps needed | Don't read — plan from graph |
-| God node with complex patterns | READ — need to see the structure |
-| File matches structural pattern | READ — before/after differ significantly |
-| Simple entity/model class | Don't read — graph has the imports |
-| Config file referenced by domain skill | READ — need exact current state |
+| Only namespace imports to change | Don't read — plan from query output |
+| Only annotation swaps needed | Don't read — plan from query output |
+| God node with complex patterns | READ — run `graphify explain "Node"` first, then read source if needed |
+| File matches structural pattern | READ — run `graphify affected "Node"` to scope impact first |
+| Simple entity/model class | Don't read — `graphify query` has the imports |
+| Config file needing migration | READ — need exact current state |
 
 ### Reading rules
 
-1. Read ONE file at a time
-2. Read ONLY when graph + domain skill isn't enough
-3. If uncertain, mark step COMPLEX and move on — the execute stage will read it
-4. Prefer reading god nodes over leaf nodes (higher impact)
+1. Query graphify BEFORE reading any source file
+2. Read ONE file at a time
+3. Read ONLY when graphify queries (+ domain skill if present) aren't enough
+4. If uncertain, mark step COMPLEX and move on — the execute stage will read it
+5. Prefer reading god nodes over leaf nodes (higher impact)
 
 ---
 
@@ -79,11 +82,11 @@ the migration sequence.
 
 Before finalizing `.konveyor/implementation.md`, verify:
 
-- [ ] Every step has a `Phase:` matching a domain skill phase
-- [ ] Every file path is real (from graph.json), not a placeholder
-- [ ] Steps follow the domain skill's phase order
+- [ ] Every step has a `Phase:` (from domain skill if present, or your own grouping)
+- [ ] Every file path is real (from graphify query output), not a placeholder
+- [ ] Steps follow the phase order (domain skill's if present, or logical grouping)
 - [ ] Dependencies between steps are explicit
 - [ ] God nodes are marked COMPLEX
 - [ ] DELETE steps come after MODIFY steps for the same area
-- [ ] Build command is included from domain skill metadata (`metadata.build_command`)
+- [ ] Build command is included (from domain skill `metadata.build_command` or detected from build manifest)
 - [ ] One file per step — no combined steps

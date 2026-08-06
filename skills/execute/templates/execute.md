@@ -12,7 +12,7 @@ per-step results, per-phase results, the final build status, and test results.
     {
       "step": 1,
       "title": "<step title>",
-      "phase": "<domain-skill-phase-name>",
+      "phase": "<phase-name>",
       "file": "<file path>",
       "status": "applied",
       "commit": "<short commit hash>"
@@ -20,7 +20,7 @@ per-step results, per-phase results, the final build status, and test results.
     {
       "step": 2,
       "title": "<step title>",
-      "phase": "<domain-skill-phase-name>",
+      "phase": "<phase-name>",
       "file": "<file path>",
       "status": "skipped",
       "reason": "<why skipped>"
@@ -28,7 +28,7 @@ per-step results, per-phase results, the final build status, and test results.
     {
       "step": 3,
       "title": "<step title>",
-      "phase": "<domain-skill-phase-name>",
+      "phase": "<phase-name>",
       "file": "<file path>",
       "status": "failed",
       "error": "<error description>"
@@ -55,12 +55,12 @@ per-step results, per-phase results, the final build status, and test results.
   ],
   "build": {
     "status": "pass|fail",
-    "command": "<build command from domain skill>",
+    "command": "<build command>",
     "errors": []
   },
   "smoke": {
     "status": "pass|fail|skipped",
-    "command": "<smoke command from domain skill, if provided>"
+    "command": "<smoke command, if provided>"
   },
   "tests": {
     "status": "pass|fail|skipped",
@@ -78,7 +78,7 @@ per-step results, per-phase results, the final build status, and test results.
 
 | Value | Description |
 |---|---|
-| `completed` | All phases finished (build may still have failed on the last phase if `CONTINUE_ON_BUILD_FAIL` is set) |
+| `completed` | All phases finished |
 | `aborted` | Execution halted due to a build or smoke gate failure |
 
 ### steps
@@ -91,7 +91,7 @@ On abort, all unrun steps are recorded with `status: "skipped"` and
 |---|---|
 | `step` | Step number from the implementation plan |
 | `title` | Step title from the implementation plan |
-| `phase` | Domain skill phase this step belongs to |
+| `phase` | Phase this step belongs to |
 | `file` | File path this step operates on |
 | `status` | `applied`, `skipped`, or `failed` |
 | `reason` | Why the step was skipped (present when `status` is `skipped`) |
@@ -100,11 +100,11 @@ On abort, all unrun steps are recorded with `status: "skipped"` and
 
 ### phases
 
-One entry per domain skill phase, in execution order.
+One entry per phase, in execution order.
 
 | Field | Description |
 |---|---|
-| `name` | Phase name from the domain skill |
+| `name` | Phase name |
 | `status` | `success` if the build gate passed, `partial` if errors remain after max fix iterations |
 | `fix_iterations` | Number of fix-and-rebuild cycles run for this phase |
 | `errors_fixed` | Count of compiler errors resolved (omit if zero) |
@@ -117,17 +117,17 @@ Final build status after all phases complete.
 | Field | Description |
 |---|---|
 | `status` | `pass` or `fail` |
-| `command` | The build command used, from the domain skill's `metadata.build_command` |
+| `command` | The build command used |
 | `errors` | Any errors still outstanding at the end of execution |
 
 ### smoke
 
-Result of the smoke gate. `skipped` if the domain skill does not provide `metadata.smoke_command`.
+Result of the smoke gate. `skipped` if no smoke command is available.
 
 | Field | Description |
 |---|---|
 | `status` | `pass`, `fail`, or `skipped` |
-| `command` | The smoke command used, from the domain skill's `metadata.smoke_command` |
+| `command` | The smoke command used (if available) |
 
 ### tests
 

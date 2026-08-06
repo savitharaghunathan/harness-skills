@@ -9,7 +9,7 @@ inputs:
   - KONVEYOR_INSTRUCTIONS
   - .konveyor/questionnaire.json
   - .konveyor/analysis.json (optional)
-  - domain skills
+  - domain skills (optional)
 outputs:
   - .konveyor/spec.md
   - .konveyor/implementation.md
@@ -26,7 +26,7 @@ decisions supplement it. Does NOT modify any source files — planning only.
 - `KONVEYOR_INSTRUCTIONS` — migration goal (primary)
 - `.konveyor/questionnaire.json` — decisions from prior stage
 - `.konveyor/analysis.json` — Kantra rule violations and patterns (if present)
-- Domain skills (`tags: [domain]`) — migration knowledge (phases, modules, references)
+- Domain skills (`tags: [domain]`) — migration knowledge (optional, see 1c)
 
 ---
 
@@ -45,42 +45,57 @@ Run graphify on the project:
 graphify update
 ```
 
-This produces `graph.json` in the repo root.
+This produces `graph.json` in `graphify-out/`. All subsequent `graphify`
+commands read from this graph automatically.
 
-### 1c. Discover Domain Skills
+### 1c. Discover Domain Skills (optional)
 
-Scan `/opt/skills/` for skills with `tags: [domain]` in their frontmatter. Read
-their SKILL.md, modules, and references to understand:
+Scan `/opt/skills/` for skills with `tags: [domain]` in their frontmatter. If
+any are found, read their SKILL.md, modules, and references to understand:
 
 - Phase order (which transformations come first)
 - What patterns to look for in the graph
 - Mapping tables (dependencies, APIs, config, patterns)
 - Build command (`metadata.build_command`)
 
+If no domain skills are found, proceed without them. You will structure the
+plan based on your own analysis of the project, using graphify and
+`questionnaire.json`.
+
 ### 1d. Understand the Project Architecture
 
-Read `graph.json` to understand the project:
+Use graphify query commands to understand the project — do NOT read
+`graph.json` manually.
 
-1. **Communities (architectural layers)**:
-   - Community 0 might be build files (pom.xml, package.json)
-   - Smaller communities often = data models (few dependencies)
-   - Medium communities = services, business logic
-   - Large, high-degree communities = API/controllers
+Available commands:
 
-2. **God nodes (high-risk abstractions)**:
-   - Nodes with degree > 20 are central to the system
-   - Mark these as COMPLEX in the plan
-   - Changes here ripple across many files
+| Command | Use |
+|---|---|
+| `graphify query "<question>"` | Ask about structure, layers, patterns, imports. Use `--dfs` for depth-first, `--budget N` to cap tokens. |
+| `graphify path "A" "B"` | Shortest dependency path between two nodes |
+| `graphify explain "X"` | Plain-language explanation of a node and its neighbors |
+| `graphify affected "X"` | All nodes impacted by changing X. Use `--depth N` to limit. |
 
-3. **Dependency flow**:
-   - Use edges to understand: who depends on what?
-   - Models → Services → Controllers (typical layering)
+Use these to discover:
+
+1. **Architectural layers** — how the project is organized (packages, modules, namespaces)
+2. **Central nodes** — high-degree nodes whose changes ripple across the codebase — mark these COMPLEX
+3. **Dependency chains** — ordering constraints between components
+4. **Migration-relevant patterns** — which files match transformation patterns (from the domain skill if present, or from your own analysis)
+
+Adapt your queries to what was detected in `questionnaire.json` and what
+the domain skill says to look for (if present). Do not use hardcoded
+queries — ask about the actual technologies, frameworks, and patterns in
+this project.
 
 ### 1e. Match Patterns to Graph
 
-Use the domain skill's patterns to identify which graph nodes need migration.
-Check node attributes (imports, annotations) against the domain skill's
-transformation rules to classify each file:
+Use graphify queries to identify which nodes need migration. If domain
+skills are present, query for patterns from their transformation rules.
+Otherwise, adapt queries to the source and target technologies detected in
+`questionnaire.json`.
+
+Classify each matched file:
 
 - Simple (import/annotation replacement only)
 - Complex (structural changes needed)
@@ -89,22 +104,24 @@ transformation rules to classify each file:
 
 ### 1f. Build Migration Order
 
-Map graph communities to the domain skill's phase order:
+Use `graphify affected` on central nodes to understand ripple effects.
 
-```
-Community 0  (1 file: build manifest)    → Phase 1: Build config
-Community 28 (5 files: data models)      → Phase 2: Models
-Community 91 (8 files: services)         → Phase 3: Services
-Community 164 (12 files: controllers)    → Phase 4: API
-```
+Use impact analysis to:
 
-This gives you the migration sequence WITHOUT reading every file.
+- Determine which files must be migrated before others
+- Identify hidden dependencies the community view doesn't show
+- Validate that your ordering won't break downstream consumers
+
+If domain skills are present, map each community to the domain skill phase
+it belongs to. Otherwise, group steps into logical phases based on your
+analysis (e.g. config, models, services, API). This gives you the migration
+sequence WITHOUT reading every file.
 
 ### 1g. Selectively Read Complex Source Files (max 5-8)
 
-Read files where the graph alone isn't enough — structural changes, god nodes,
-complex patterns from the domain skill. Don't read files that only need
-import or annotation changes.
+Read files where the graph alone isn't enough — structural changes, central
+nodes, complex patterns. Don't read files that only need import or
+annotation changes.
 
 ---
 
@@ -131,10 +148,10 @@ decisions applied. Structure:
 <from questionnaire.json — list each decision and chosen option>
 
 ## Approach
-<phase-by-phase summary from domain skill>
+<phase-by-phase summary — from domain skill if present, or from your own analysis>
 
 ## Domain Skill
-<name and description of the domain skill being used, or "none">
+<name and description of the domain skill being used, or "none — plan is based on project analysis">
 ```
 
 ### Interactive mode
@@ -173,7 +190,7 @@ Write `.konveyor/implementation.md` — step-by-step migration instructions.
 ## Steps
 
 ### Step 1: <title>
-- Phase: <domain-skill-phase-name>
+- Phase: <phase-name> (from domain skill, or your own grouping)
 - File: <exact path from repo root>
 - Action: CREATE | MODIFY | DELETE
 - What to do: <specific instructions>
@@ -184,7 +201,7 @@ Write `.konveyor/implementation.md` — step-by-step migration instructions.
 ...
 
 ## Verification
-<domain skill's metadata.build_command>
+<build command — from domain skill metadata.build_command, or detected from build manifest>
 
 ## Notes
 <gotchas, special cases>
@@ -192,11 +209,11 @@ Write `.konveyor/implementation.md` — step-by-step migration instructions.
 
 ### Rules for writing steps
 
-1. **Phase on every step** — every step must have a `Phase:` matching a domain skill phase
+1. **Phase on every step** — every step must have a `Phase:` field (from domain skill phases if present, or your own logical grouping)
 2. **One file per step** — never combine two files in one step
-3. **Exact paths** — use real paths from graph.json, not placeholders
+3. **Exact paths** — use real paths from graphify output, not placeholders
 4. **Dependency order** — steps that others depend on come first
-5. **Phase order** — follow the domain skill's phase ordering
+5. **Phase order** — follow the domain skill's phase ordering if present, or your own logical ordering
 6. **Hard steps flagged** — add `COMPLEX:` prefix for structural changes
 7. **DELETE steps last** — after all modifications are done
 
@@ -205,8 +222,8 @@ Write `.konveyor/implementation.md` — step-by-step migration instructions.
 **Mechanical** (simple find-replace):
 ```markdown
 ### Step 5: Migrate imports in <file>
-- Phase: <domain-skill-phase-name>
-- File: <exact path from graph.json>
+- Phase: <phase-name>
+- File: <exact path from graphify output>
 - Action: MODIFY
 - What to do: Replace all old namespace imports with new namespace imports
 - Why: Target framework uses different namespace
@@ -214,22 +231,22 @@ Write `.konveyor/implementation.md` — step-by-step migration instructions.
 - Verify: No old namespace imports remain
 ```
 
-**Complex** (structural/architectural changes — use domain skill patterns):
+**Complex** (structural/architectural changes):
 ```markdown
 ### Step 14: COMPLEX — Convert message listener
-- Phase: <domain-skill-phase-name>
+- Phase: <phase-name>
 - File: <path>
 - Action: MODIFY
 - What to do:
-    - BEFORE: <old pattern from domain skill>
-    - AFTER: <new pattern from domain skill>
+    - BEFORE: <old pattern>
+    - AFTER: <new pattern>
     - Specific changes:
         1. Remove: <old imports/annotations/methods>
         2. Add: <new imports/annotations>
         3. Replace: <method signatures, configuration>
-- Why: <from domain skill — why the old pattern isn't supported>
+- Why: <why the old pattern isn't supported>
 - Depends on: Step X, Step Y
-- Verify: <from domain skill — grep checks, compile commands>
+- Verify: <grep checks, compile commands>
 ```
 
 If a complex change also requires config file updates, create a separate step
@@ -238,11 +255,11 @@ per step, always.
 
 **CREATE** (new file):
 ```markdown
-### Step 3: Create Quarkus application.properties
-- Phase: <domain-skill-phase-name>
-- File: src/main/resources/application.properties
+### Step 3: Create target config file
+- Phase: <phase-name>
+- File: <path>
 - Action: CREATE
-- What to do: Create file with <specific content from domain skill>
+- What to do: Create file with <specific content>
 - Why: <target framework requires this config file>
 - Depends on: Step 1
 - Verify: File exists with required properties
@@ -250,12 +267,12 @@ per step, always.
 
 **DELETE** (remove file):
 ```markdown
-### Step 20: Remove legacy deployment descriptor
-- Phase: <domain-skill-phase-name>
-- File: src/main/webapp/WEB-INF/web.xml
+### Step 20: Remove legacy config file
+- Phase: <phase-name>
+- File: <path>
 - Action: DELETE
 - What to do: Delete this file — no longer needed by target framework
-- Why: <target framework does not use deployment descriptors>
+- Why: <target framework does not use this file>
 - Depends on: Step 14, Step 15
 - Verify: File no longer exists
 ```
@@ -288,6 +305,6 @@ The stage is NOT complete until both files are written and committed.
 - Do NOT modify source files — planning only
 - Do NOT execute any migration steps
 - Do NOT skip graphify — the graph is essential for later stages
-- Follow the domain skill's phase order when structuring steps
+- Follow the domain skill's phase order when structuring steps (if present)
 - You MUST write `.konveyor/spec.md` and `.konveyor/implementation.md` before finishing
 - Commit plan outputs when done — do NOT push
