@@ -45,7 +45,8 @@ Run graphify on the project:
 graphify update
 ```
 
-This produces `graph.json` in the repo root.
+This produces `graph.json` in `graphify-out/`. All subsequent `graphify`
+commands read from this graph automatically.
 
 ### 1c. Discover Domain Skills
 
@@ -59,28 +60,52 @@ their SKILL.md, modules, and references to understand:
 
 ### 1d. Understand the Project Architecture
 
-Read `graph.json` to understand the project:
+Use graphify query commands to understand the project — do NOT read
+`graph.json` manually.
 
-1. **Communities (architectural layers)**:
-   - Community 0 might be build files (pom.xml, package.json)
-   - Smaller communities often = data models (few dependencies)
-   - Medium communities = services, business logic
-   - Large, high-degree communities = API/controllers
+1. **Communities (architectural layers)** — query for layer structure:
 
-2. **God nodes (high-risk abstractions)**:
-   - Nodes with degree > 20 are central to the system
+   ```bash
+   graphify query "What are the main architectural layers?"
+   ```
+
+2. **God nodes (high-risk abstractions)** — query for central nodes:
+
+   ```bash
+   graphify query "Which nodes have the highest degree and most dependencies?"
+   ```
+
    - Mark these as COMPLEX in the plan
    - Changes here ripple across many files
 
-3. **Dependency flow**:
-   - Use edges to understand: who depends on what?
-   - Models → Services → Controllers (typical layering)
+3. **Dependency flow** — trace specific paths:
+
+   ```bash
+   graphify path "ServiceA" "Database"
+   ```
+
+   Use `graphify path` to trace dependency chains between any two nodes
+   without reading intermediate files.
+
+4. **Node explanations** — understand any node in context:
+
+   ```bash
+   graphify explain "OrderServiceMDB"
+   ```
+
+   Returns a plain-language explanation of a node and its neighbors.
 
 ### 1e. Match Patterns to Graph
 
-Use the domain skill's patterns to identify which graph nodes need migration.
-Check node attributes (imports, annotations) against the domain skill's
-transformation rules to classify each file:
+Use graphify queries to identify which nodes need migration. Query for
+patterns from the domain skill's transformation rules:
+
+```bash
+graphify query "Which classes use @Stateless or @Stateful?"
+graphify query "Which files import javax.ejb?"
+```
+
+Classify each matched file:
 
 - Simple (import/annotation replacement only)
 - Complex (structural changes needed)
@@ -89,7 +114,20 @@ transformation rules to classify each file:
 
 ### 1f. Build Migration Order
 
-Map graph communities to the domain skill's phase order:
+Use `graphify affected` to understand ripple effects, then map communities
+to the domain skill's phase order:
+
+```bash
+graphify affected "OrderService" --depth 2
+```
+
+This shows all nodes impacted by a change to `OrderService`. Use it to:
+
+- Determine which files must be migrated before others
+- Identify hidden dependencies the community view doesn't show
+- Validate that your phase ordering won't break downstream consumers
+
+Map communities to phases:
 
 ```
 Community 0  (1 file: build manifest)    → Phase 1: Build config
@@ -194,7 +232,7 @@ Write `.konveyor/implementation.md` — step-by-step migration instructions.
 
 1. **Phase on every step** — every step must have a `Phase:` matching a domain skill phase
 2. **One file per step** — never combine two files in one step
-3. **Exact paths** — use real paths from graph.json, not placeholders
+3. **Exact paths** — use real paths from graphify output, not placeholders
 4. **Dependency order** — steps that others depend on come first
 5. **Phase order** — follow the domain skill's phase ordering
 6. **Hard steps flagged** — add `COMPLEX:` prefix for structural changes
@@ -206,7 +244,7 @@ Write `.konveyor/implementation.md` — step-by-step migration instructions.
 ```markdown
 ### Step 5: Migrate imports in <file>
 - Phase: <domain-skill-phase-name>
-- File: <exact path from graph.json>
+- File: <exact path from graphify output>
 - Action: MODIFY
 - What to do: Replace all old namespace imports with new namespace imports
 - Why: Target framework uses different namespace
